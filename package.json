@@ -1,0 +1,15 @@
+{
+  "name": "my-life-system",
+  "version": "1.0.0",
+  "description": "My Life System — şahsy Durmuş OS (AI bilen)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
