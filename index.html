@@ -353,10 +353,11 @@ const MODULES=[
  ['analytics','📊','Analitika','linear-gradient(135deg,#a78bfa,#38bdf8)'],
  ['calendar','📅','Kalendar','linear-gradient(135deg,#2dd4bf,#a78bfa)']
 ];
-const db={profile:{xp:0,mood:-1,stress:-1,theme:'dark',vaultPin:'',name:''},goals:[],tasks:[],habits:[],notes:[],journal:[],finance:[],health:{water:0,weight:[]},focusDone:0,routine:[],books:[],files:[],identity:{vision:'',mission:'',values:[],strengths:[],weaknesses:[]},vault:[],contacts:[],decisions:[],dna:'',gps:{target:''}};
+const db={profile:{xp:0,mood:-1,stress:-1,theme:'dark',vaultPin:'',name:''},goals:[],tasks:[],habits:[],notes:[],journal:[],finance:[],health:{water:0,weight:[]},focusDone:0,routine:[],books:[],files:[],identity:{vision:'',mission:'',values:[],strengths:[],weaknesses:[]},vault:[],contacts:[],decisions:[],dna:'',gps:{target:''},aiChat:[],agentChats:{}};
 let curBookId=null,curBookText='',readerFs=17,upCtx=null,vaultOpen=false,curAgent=null;
 const agentChats={};let curDec={title:'',pros:[],cons:[]};
 let cur='dashboard', chat=[];
+function loadChatHistory(){chat=Array.isArray(db.aiChat)?db.aiChat.filter(m=>!m.load):[];Object.assign(agentChats,db.agentChats||{});}
 
 document.getElementById('date').textContent=new Date().toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'});
 
@@ -364,6 +365,7 @@ async function save(){try{await window.storage.set('mls_v4',JSON.stringify(db));
 async function saveNavState(){try{await window.storage.set('mls_nav',JSON.stringify({s:cur,b:db.lastBook||null,scroll:db.scroll||{}}));}catch(e){}}
 async function load(){
   try{const r=await window.storage.get('mls_v4');if(r&&r.value)Object.assign(db,JSON.parse(r.value));}catch(e){}
+  loadChatHistory();
   let navst=null;try{const n=await window.storage.get('mls_nav');if(n&&n.value)navst=JSON.parse(n.value);}catch(e){}
   if(navst&&navst.scroll)db.scroll=navst.scroll;else if(!db.scroll)db.scroll={};
   if(navst&&navst.b)db.lastBook=navst.b;
@@ -469,6 +471,10 @@ function rDash(){
   const moods=['😞','😕','😐','🙂','😄'];
   const sug = tLeft? `Bu gün ${tLeft} işiň galdy. Iň möhümini ilki et 💪` : 'Ähli işiň gutardy — özüňi sylagla! 🎉';
   return `
+  <div style="display:flex;align-items:center;gap:11px;padding:4px 2px 12px;">
+    <img src="icon-192.png" alt="logo" style="width:46px;height:46px;border-radius:13px;box-shadow:0 8px 20px -6px rgba(0,0,0,.55);" onerror="this.style.display='none'">
+    <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:20px;background:linear-gradient(90deg,#22d3ee,#a78bfa);-webkit-background-clip:text;background-clip:text;color:transparent;">My Life System</div>
+  </div>
   <div class="card"><div class="hero">
     <div class="ring"><svg width="96" height="96"><circle cx="48" cy="48" r="42" stroke="var(--accent-soft)" stroke-width="9" fill="none"/><circle cx="48" cy="48" r="42" stroke="url(#g)" stroke-width="9" fill="none" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${off}"/><defs><linearGradient id="g"><stop offset="0%" stop-color="#2dd4bf"/><stop offset="100%" stop-color="#22d3ee"/></linearGradient></defs></svg><div class="pscore"><b>${ps}</b><small>SKOR</small></div></div>
     <div class="hx"><h3>Bu günki ýagdaý</h3><p>${tLeft} iş galdy · ${hToday}/${db.habits.length||0} endik · ${level()}-nji dereje</p></div>
@@ -859,6 +865,7 @@ async function sendAgent(){
   const hist=agentChats[curAgent].filter(m=>!m.load).slice(-6).map(m=>(m.role==='me'?'Ulanyjy: ':'Agent: ')+m.text).join('\n');
   try{const txt=await aiCall(a[3],ctx+'\n\nSöhbet:\n'+hist+'\n\nAgent jogaby:',700);agentChats[curAgent]=agentChats[curAgent].filter(m=>!m.load);agentChats[curAgent].push({role:'ai',text:txt||'Jogap ýok'});}
   catch(e){agentChats[curAgent]=agentChats[curAgent].filter(m=>!m.load);agentChats[curAgent].push({role:'ai',text:'AI jogap berip bilmedi. Internet barlygyny barla — AI diňe Claude.ai içinde işleýär.'});}
+  db.agentChats=agentChats;save();
   render();
 }
 
@@ -1061,8 +1068,10 @@ function fReset(){clearInterval(fInt);fRun=false;fTime=25*60;paintTimer();}
 function rAI(){
   const msgs=chat.map(m=>`<div class="msg ${m.role}">${esc(m.text).replace(/\n/g,'<br>')}</div>`).join('');
   const intro=chat.length?'':`<div class="msg ai">Salam! Men seniň şahsy AI kömekçiň 🤖 Maksatlaryň, endikleriň ýa-da meýilnamalaryň barada islendik zady sora.</div>`;
-  return head('AI Kömekçi')+`<div class="chat" id="chat">${intro}${msgs}</div><div class="chat-input"><input id="ai-in" placeholder="Soragyňy ýaz..." onkeydown="if(event.key==='Enter')sendAI()" style="flex:1;border:1.5px solid var(--line);background:var(--card);border-radius:15px;padding:13px 15px;font-family:inherit;font-size:15px;color:var(--ink);outline:none;"><button class="addbar" style="border:none;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border-radius:15px;width:48px;font-size:20px;cursor:pointer;" onclick="sendAI()">➤</button></div>`;
+  const clr=chat.length?`<div style="text-align:center;padding:4px 0 8px;"><button onclick="clearChat()" style="background:var(--card2);border:1px solid var(--line);color:var(--muted);border-radius:12px;padding:6px 14px;font-size:12px;font-family:inherit;cursor:pointer;">🗑 Söhbeti arassala</button></div>`:'';
+  return head('AI Kömekçi')+`${clr}<div class="chat" id="chat">${intro}${msgs}</div><div class="chat-input"><input id="ai-in" placeholder="Soragyňy ýaz..." onkeydown="if(event.key==='Enter')sendAI()" style="flex:1;border:1.5px solid var(--line);background:var(--card);border-radius:15px;padding:13px 15px;font-family:inherit;font-size:15px;color:var(--ink);outline:none;"><button class="addbar" style="border:none;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border-radius:15px;width:48px;font-size:20px;cursor:pointer;" onclick="sendAI()">➤</button></div>`;
 }
+async function clearChat(){if(!(await confirmModal('AI söhbetini arassalamakçymy?')))return;chat=[];db.aiChat=[];save();render();}
 function scrollChat(){const c=document.getElementById('chat');if(c)c.scrollIntoView({block:'end'});const v=document.getElementById('view');if(v)v.scrollTop=v.scrollHeight;}
 async function sendAI(){
   const inp=document.getElementById('ai-in');const q=inp.value.trim();if(!q)return;
@@ -1075,6 +1084,7 @@ async function sendAI(){
   }catch(e){
     chat=chat.filter(m=>!m.load);chat.push({role:'ai',text:'AI jogap berip bilmedi 😕 Internetiň barlygyny barla. AI diňe app Claude.ai içinde açykka işleýär (faýly ýükläp aýratyn açsaň işlemeýär).'});
   }
+  db.aiChat=chat.filter(m=>!m.load);save();
   render();
 }
 
