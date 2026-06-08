@@ -1,0 +1,1226 @@
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0c10">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Life OS">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<!-- My Life System — Personal OS prototip v4 -->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Manrope:wght@400;500;600;700;800&display=swap');
+:root{
+  --ink:#eaf2f1;--muted:#8893a0;
+  --bg:#0a0c10;--card:rgba(255,255,255,.05);--card2:rgba(255,255,255,.085);--line:rgba(255,255,255,.08);
+  --accent:#2dd4bf;--accent-2:#22d3ee;--accent-soft:rgba(45,212,191,.16);
+  --green:#34d399;--blue:#38bdf8;--purple:#a78bfa;--shadow:0 24px 52px -24px rgba(0,0,0,.8);--rad:24px;
+}
+.phone[data-theme="light"]{
+  --ink:#101826;--muted:#5f6b7a;
+  --bg:#eef3f3;--card:rgba(255,255,255,.72);--card2:rgba(255,255,255,.92);--line:rgba(16,24,38,.08);
+  --accent:#0d9488;--accent-2:#0891b2;--accent-soft:rgba(13,148,136,.12);
+  --green:#0f9d6b;--blue:#0284c7;--purple:#7c5cf0;--shadow:0 18px 40px -20px rgba(20,40,60,.2);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{overflow-x:hidden;}
+body{font-family:'Manrope',sans-serif;background:#05070a;}
+.phone{max-width:430px;margin:0 auto;min-height:100vh;position:relative;overflow-x:hidden;display:flex;flex-direction:column;scroll-behavior:smooth;
+  background:radial-gradient(95% 55% at 0% 0%,rgba(45,212,191,.16),transparent 60%),radial-gradient(90% 45% at 100% 5%,rgba(34,211,238,.12),transparent 55%),radial-gradient(100% 60% at 100% 100%,rgba(167,139,250,.12),transparent 60%),radial-gradient(100% 60% at 0% 100%,rgba(52,211,153,.10),transparent 60%),var(--bg);}
+.phone[data-theme="light"]{background:radial-gradient(95% 55% at 0% 0%,rgba(13,148,136,.12),transparent 60%),radial-gradient(90% 45% at 100% 5%,rgba(8,145,178,.10),transparent 55%),radial-gradient(100% 60% at 100% 100%,rgba(124,92,240,.10),transparent 60%),var(--bg);}
+.phone::before{display:none;}
+.blob{display:none;}
+@keyframes float{0%,100%{transform:none;}50%{transform:none;}}
+.phone::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.035;z-index:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+.top{padding:26px 22px 8px;position:relative;z-index:2;display:flex;justify-content:space-between;align-items:flex-start;}
+.top .hi .greet{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:1.4px;text-transform:uppercase;}
+.top .hi h1{font-family:'Bricolage Grotesque',sans-serif;font-size:25px;font-weight:800;color:var(--ink);letter-spacing:-.5px;margin-top:3px;}
+.top .hi .date{font-size:12px;color:var(--muted);margin-top:4px;font-weight:600;text-transform:capitalize;}
+.lvlpill{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+.lvlpill .lv{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;font-weight:800;font-size:12px;padding:6px 12px;border-radius:99px;box-shadow:0 8px 18px -6px rgba(255,93,115,.6);}
+.lvlpill .nb{background:var(--card2);border:1px solid var(--line);color:var(--ink);font-weight:700;font-size:11px;padding:5px 11px;border-radius:99px;cursor:pointer;backdrop-filter:blur(8px);}
+
+.view{flex:1;padding:8px 18px 118px;overflow-y:auto;position:relative;z-index:2;animation:fade .35s cubic-bezier(.2,.8,.2,1);}
+@keyframes fade{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+
+.scr-title{display:flex;align-items:center;gap:10px;margin:8px 4px 16px;}
+.scr-title .bk{background:var(--card2);border:1px solid var(--line);width:36px;height:36px;border-radius:12px;display:grid;place-items:center;cursor:pointer;font-size:17px;color:var(--ink);backdrop-filter:blur(8px);}
+.scr-title h2{font-family:'Fraunces',serif;font-size:24px;color:var(--ink);font-weight:600;letter-spacing:-.3px;}
+.scr-title .cnt{margin-left:auto;font-size:12px;color:var(--muted);font-weight:700;background:var(--card2);padding:4px 11px;border-radius:99px;}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);padding:16px;margin-bottom:12px;box-shadow:var(--shadow);animation:fade .3s ease;}
+.row{display:flex;align-items:center;gap:13px;}
+
+/* dashboard */
+.hero{display:flex;gap:16px;align-items:center;}
+.ring{width:96px;height:96px;flex-shrink:0;position:relative;}
+.ring svg{transform:rotate(-90deg);}
+.ring .pscore{position:absolute;inset:0;display:grid;place-items:center;text-align:center;}
+.ring .pscore b{font-family:'Bricolage Grotesque',sans-serif;font-size:24px;color:var(--ink);line-height:1;}
+.ring .pscore small{font-size:9px;color:var(--muted);font-weight:700;letter-spacing:.5px;}
+.hero .hx h3{font-family:'Fraunces',serif;font-size:18px;color:var(--ink);margin-bottom:4px;}
+.hero .hx p{font-size:13px;color:var(--muted);line-height:1.5;}
+.mini-stats{display:flex;gap:10px;margin-bottom:12px;}
+.ms{flex:1;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:13px;box-shadow:var(--shadow);}
+.ms b{font-family:'Bricolage Grotesque',sans-serif;font-size:22px;color:var(--ink);display:block;}
+.ms small{font-size:11px;color:var(--muted);font-weight:600;}
+.quote{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border:none;}
+.quote .q{font-family:'Fraunces',serif;font-style:italic;font-size:15px;line-height:1.5;}
+.quote .a{font-size:12px;opacity:.85;margin-top:8px;font-weight:600;}
+.ai-card{border:1px solid var(--line);background:var(--card);}
+.ai-card .hd{display:flex;align-items:center;gap:8px;font-weight:800;color:var(--ink);font-size:14px;margin-bottom:8px;}
+.ai-card .hd .tag{font-size:9px;background:linear-gradient(135deg,var(--purple),var(--blue));color:#fff;padding:3px 8px;border-radius:99px;letter-spacing:.5px;}
+.ai-card p{font-size:13.5px;color:var(--muted);line-height:1.55;}
+.mood{display:flex;justify-content:space-between;gap:6px;margin-top:10px;}
+.mood span{flex:1;text-align:center;font-size:24px;padding:8px 0;border-radius:13px;cursor:pointer;transition:.18s;border:1.5px solid transparent;}
+.mood span.sel{background:var(--accent-soft);border-color:var(--accent);transform:scale(1.05);}
+.sect-label{font-size:12px;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin:18px 6px 12px;}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 8px;text-align:center;cursor:pointer;box-shadow:var(--shadow);transition:.18s;}
+.tile:active{transform:scale(.95);}
+.tile .tic{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;font-size:23px;margin:0 auto;box-shadow:0 8px 16px -8px rgba(0,0,0,.4);}
+.tile .ic{font-size:25px;}
+.tile .nm{font-size:11px;font-weight:700;color:var(--ink);margin-top:9px;}
+/* routine + priority */
+.rt-prog{display:flex;align-items:center;gap:12px;}
+.rt-prog .rr{width:54px;height:54px;flex-shrink:0;position:relative;}
+.rt-prog .rr .pc{position:absolute;inset:0;display:grid;place-items:center;font-weight:800;font-size:14px;color:var(--ink);}
+.pri-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);}
+.pri-item:last-child{border:none;}
+.pri-item .num{width:28px;height:28px;flex-shrink:0;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;font-weight:800;font-size:13px;display:grid;place-items:center;}
+.pri-item .num.g{background:linear-gradient(135deg,var(--green),#5dd6a0);}
+.pri-item .pt{flex:1;font-size:14px;font-weight:600;color:var(--ink);}
+.pri-item .ptime{font-size:11px;font-weight:700;color:var(--accent);background:var(--accent-soft);padding:3px 8px;border-radius:99px;}
+.warn-card{background:linear-gradient(135deg,rgba(255,93,115,.14),rgba(255,138,91,.12));border:1px solid rgba(255,93,115,.3);}
+.warn-card .hd{font-weight:800;color:var(--accent);font-size:14px;margin-bottom:8px;display:flex;align-items:center;gap:7px;}
+.warn-card ul{margin:0;padding-left:18px;}.warn-card li{font-size:13px;color:var(--ink);margin-bottom:5px;line-height:1.4;}
+.hard-chip{display:inline-flex;align-items:center;gap:6px;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin:4px 6px 0 0;font-size:13px;font-weight:700;color:var(--ink);}
+
+/* books + reader */
+.book-item{display:flex;gap:13px;align-items:center;cursor:pointer;}
+.book-cover{width:48px;height:64px;border-radius:9px;flex-shrink:0;display:grid;place-items:center;font-size:24px;color:#fff;box-shadow:0 10px 18px -7px rgba(0,0,0,.45);}
+.book-meta{flex:1;min-width:0;}
+.book-meta .bt{font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.book-meta .bp{font-size:11px;color:var(--muted);font-weight:600;margin-top:3px;}
+.book-bar{height:6px;background:var(--accent-soft);border-radius:99px;overflow:hidden;margin-top:8px;}
+.book-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));}
+.file-btn{display:block;width:100%;text-align:center;padding:16px;border-radius:15px;border:2px dashed var(--line);background:var(--card);color:var(--ink);font-weight:700;font-family:inherit;cursor:pointer;font-size:14px;}
+.file-btn:active{background:var(--accent-soft);}
+.reader-wrap{margin:-8px -18px 0;}
+.rprog{height:4px;background:var(--accent-soft);position:sticky;top:0;z-index:4;}
+.rprog i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));width:0;}
+.reader-head{display:flex;align-items:center;gap:10px;padding:12px 16px;position:sticky;top:4px;background:var(--card2);backdrop-filter:blur(16px);z-index:3;border-bottom:1px solid var(--line);}
+.reader-head .bk{background:var(--card);border:1px solid var(--line);width:34px;height:34px;border-radius:11px;display:grid;place-items:center;cursor:pointer;font-size:16px;color:var(--ink);flex-shrink:0;}
+.reader-head .rt{flex:1;font-family:'Fraunces',serif;font-weight:600;color:var(--ink);font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.reader-head .pct{font-size:12px;font-weight:800;color:var(--accent);flex-shrink:0;}
+.reader-head button.rfs{width:30px;height:30px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-weight:800;cursor:pointer;flex-shrink:0;}
+.reader-body{padding:20px 20px 60px;font-size:var(--rfs,17px);line-height:1.8;color:var(--ink);white-space:pre-wrap;font-family:'Fraunces',serif;}
+.ai-mini{margin:14px 18px 0;padding:13px 15px;border-radius:14px;background:var(--card);border:1px solid var(--line);font-size:13.5px;color:var(--muted);line-height:1.55;}
+.fic{width:46px;height:46px;border-radius:12px;flex-shrink:0;display:grid;place-items:center;background:var(--card2);border:1px solid var(--line);background-size:cover;background-position:center;}
+.fic.isimg{border:none;}
+.note-img{width:100%;height:160px;border-radius:13px;margin-top:10px;background:var(--card2);background-size:cover;background-position:center;cursor:pointer;border:1px solid var(--line);}
+.file-chip{display:inline-flex;align-items:center;gap:7px;margin-top:10px;background:var(--card2);border:1px solid var(--line);border-radius:11px;padding:8px 12px;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;}
+/* technique cards */
+.tech{display:flex;gap:13px;align-items:flex-start;}
+.tech .te{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;font-size:21px;flex-shrink:0;box-shadow:0 8px 16px -8px rgba(0,0,0,.5);}
+.tech .tt{font-weight:800;color:var(--ink);font-size:14px;}
+.tech .td{font-size:13px;color:var(--muted);line-height:1.5;margin-top:3px;}
+/* alarm */
+.alarm{position:fixed;inset:0;max-width:420px;margin:0 auto;z-index:50;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:34px;background:linear-gradient(160deg,#1c1416,#241a1d);}
+.alarm.on{display:flex;animation:fade .3s ease;}
+.alarm .bell{font-size:74px;animation:ring .7s ease-in-out infinite;}
+@keyframes ring{0%,100%{transform:rotate(0)}25%{transform:rotate(15deg)}75%{transform:rotate(-15deg)}}
+.alarm h2{font-family:'Fraunces',serif;color:#fff;font-size:26px;margin:20px 0 8px;}
+.alarm p{color:rgba(255,255,255,.82);font-size:17px;margin-bottom:6px;line-height:1.4;}
+.alarm .time{font-family:'Bricolage Grotesque',sans-serif;color:var(--accent);font-size:42px;font-weight:800;margin-top:6px;}
+.alarm button{margin-top:30px;padding:16px 42px;border-radius:16px;border:none;font-weight:800;font-family:inherit;font-size:16px;cursor:pointer;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;box-shadow:0 12px 26px -8px rgba(0,0,0,.6);}
+.alarm button:active{transform:scale(.95);}
+.modal{position:fixed;inset:0;max-width:420px;margin:0 auto;z-index:60;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(10,8,14,.55);backdrop-filter:blur(3px);}
+.modal.on{display:flex;animation:fade .2s ease;}
+.modal .m-box{width:100%;background:var(--card2);backdrop-filter:blur(24px);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 24px 50px -16px rgba(0,0,0,.7);}
+.modal h3{font-family:'Fraunces',serif;font-size:18px;color:var(--ink);margin-bottom:14px;}
+.modal .m-in{width:100%;border:1.5px solid var(--line);background:var(--card);border-radius:12px;padding:12px 13px;font-family:inherit;font-size:15px;color:var(--ink);outline:none;margin-bottom:10px;}
+.modal .m-in:focus{border-color:var(--accent);}
+.modal .m-btns{display:flex;gap:10px;margin-top:4px;}
+.modal .m-btns button{flex:1;padding:12px;border-radius:12px;font-weight:700;font-family:inherit;cursor:pointer;border:none;font-size:14px;}
+.modal .m-cancel{background:var(--card);border:1px solid var(--line)!important;color:var(--ink);}
+.modal .m-ok{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;}
+
+/* generic list items */
+.addbar{display:flex;gap:9px;margin:0 2px 12px;}
+.addbar input{flex:1;border:1.5px solid var(--line);background:var(--card);border-radius:15px;padding:13px 15px;font-family:inherit;font-size:15px;color:var(--ink);outline:none;}
+.addbar input::placeholder{color:var(--muted);}
+.addbar input:focus{border-color:var(--accent);}
+.addbar button{border:none;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border-radius:15px;width:48px;font-size:24px;font-weight:300;cursor:pointer;flex-shrink:0;box-shadow:0 8px 18px -6px rgba(255,93,115,.6);}
+.addbar button:active{transform:scale(.93);}
+.timeset{display:flex;align-items:center;gap:8px;margin:0 4px 16px;font-size:13px;color:var(--muted);font-weight:600;}
+.timeset input{flex:1;border:1.5px solid var(--line);background:var(--card);border-radius:12px;padding:9px 12px;font-family:inherit;font-size:14px;color:var(--ink);outline:none;}
+.check{width:25px;height:25px;border-radius:50%;border:2.5px solid var(--muted);flex-shrink:0;cursor:pointer;display:grid;place-items:center;transition:.22s;}
+.check.done{background:var(--green);border-color:var(--green);}
+.check.done::after{content:"✓";color:#fff;font-size:14px;font-weight:800;}
+.tcol{flex:1;display:flex;flex-direction:column;gap:6px;align-items:flex-start;}
+.ctext{font-size:15px;color:var(--ink);font-weight:600;}
+.ctext.done{text-decoration:line-through;color:var(--muted);font-weight:500;}
+.timebadge{font-size:12px;font-weight:700;color:var(--accent);background:var(--accent-soft);padding:3px 10px;border-radius:99px;display:inline-flex;gap:5px;align-items:center;}
+.timebadge.over{color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent-2));}
+.del{color:var(--muted);font-size:21px;cursor:pointer;padding:0 4px;opacity:.45;line-height:1;align-self:flex-start;}
+.del:active{opacity:1;}
+.gtitle{flex:1;font-family:'Fraunces',serif;font-size:17px;font-weight:600;color:var(--ink);}
+.bar{height:9px;background:var(--accent-soft);border-radius:99px;overflow:hidden;margin:11px 0;}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:99px;transition:.45s;}
+.gctl{display:flex;align-items:center;justify-content:space-between;}
+.gctl .pct{font-size:14px;font-weight:800;color:var(--accent);}
+.gbtns button{border:1px solid var(--line);background:var(--card);border-radius:11px;width:32px;height:32px;font-size:17px;color:var(--ink);cursor:pointer;margin-left:7px;}
+.hclock{font-size:12px;font-weight:700;color:var(--accent);background:var(--accent-soft);padding:4px 10px;border-radius:99px;cursor:pointer;}
+.streak{font-size:12px;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent-2));padding:4px 10px;border-radius:99px;}
+.htitle{flex:1;font-size:15px;font-weight:700;color:var(--ink);}
+.week{display:flex;justify-content:space-between;gap:6px;margin-top:12px;}
+.day{flex:1;text-align:center;}
+.day small{font-size:10px;color:var(--muted);display:block;margin-bottom:6px;font-weight:700;}
+.day .pill{height:30px;border-radius:10px;border:1.5px solid var(--line);background:var(--card);cursor:pointer;display:grid;place-items:center;font-size:13px;transition:.18s;}
+.day .pill.fill{background:var(--green);border-color:var(--green);color:#fff;}
+.ntitle{font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:var(--ink);}
+.nbody{font-size:14px;color:var(--muted);line-height:1.55;white-space:pre-wrap;margin-top:7px;}
+.empty{text-align:center;color:var(--muted);font-size:14px;padding:40px 10px;font-style:italic;font-family:'Fraunces',serif;}
+
+/* finance */
+.fin-bal{text-align:center;}
+.fin-bal small{font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+.fin-bal b{font-family:'Bricolage Grotesque',sans-serif;font-size:34px;color:var(--ink);display:block;margin-top:4px;}
+.fin-split{display:flex;gap:10px;margin-top:14px;}
+.fin-split .fs{flex:1;text-align:center;padding:10px;border-radius:14px;}
+.fin-split .inn{background:rgba(63,174,125,.15);color:var(--green);}
+.fin-split .out{background:var(--accent-soft);color:var(--accent);}
+.fin-split b{font-size:17px;display:block;}.fin-split small{font-size:11px;font-weight:600;opacity:.8;}
+.txt{font-size:14px;color:var(--ink);font-weight:600;}
+.amt-in{color:var(--green);font-weight:800;}.amt-out{color:var(--accent);font-weight:800;}
+
+/* health / focus */
+.big-num{font-family:'Bricolage Grotesque',sans-serif;font-size:40px;color:var(--ink);text-align:center;}
+.water-row{display:flex;justify-content:center;gap:8px;margin:14px 0;}
+.water-row button{width:46px;height:46px;border-radius:14px;border:1px solid var(--line);background:var(--card);font-size:20px;cursor:pointer;color:var(--ink);}
+.timer{text-align:center;}
+.timer .tt{font-family:'Bricolage Grotesque',sans-serif;font-size:56px;color:var(--ink);letter-spacing:1px;}
+.timer .ctrls{display:flex;gap:10px;justify-content:center;margin-top:16px;}
+.timer .ctrls button{padding:12px 22px;border-radius:14px;border:none;font-weight:700;font-family:inherit;cursor:pointer;font-size:14px;}
+.btn-pri{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;}
+.btn-sec{background:var(--card);border:1px solid var(--line)!important;color:var(--ink);}
+
+/* AI chat */
+.chat{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+.msg{max-width:82%;padding:12px 15px;border-radius:18px;font-size:14px;line-height:1.5;animation:fade .3s ease;}
+.msg.me{align-self:flex-end;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border-bottom-right-radius:6px;}
+.msg.ai{align-self:flex-start;background:var(--card2);border:1px solid var(--line);color:var(--ink);border-bottom-left-radius:6px;}
+.msg.ai.load{color:var(--muted);font-style:italic;}
+.chat-input{position:sticky;bottom:0;display:flex;gap:9px;padding-top:6px;}
+
+/* analytics bars */
+.abar{margin-bottom:14px;}
+.abar .lab{display:flex;justify-content:space-between;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:6px;}
+.abar .lab span:last-child{color:var(--accent);}
+.abar .track{height:10px;background:var(--accent-soft);border-radius:99px;overflow:hidden;}
+.abar .track i{display:block;height:100%;border-radius:99px;transition:.5s;}
+
+/* profile */
+.prow{display:flex;align-items:center;justify-content:space-between;padding:14px 4px;border-bottom:1px solid var(--line);}
+.prow:last-child{border:none;}
+.prow .pl{font-size:14px;font-weight:600;color:var(--ink);}
+.toggle{width:48px;height:28px;border-radius:99px;background:var(--line);position:relative;cursor:pointer;transition:.2s;}
+.toggle.on{background:var(--green);}
+.toggle::after{content:"";position:absolute;width:22px;height:22px;border-radius:50%;background:#fff;top:3px;left:3px;transition:.2s;box-shadow:0 2px 4px rgba(0,0,0,.2);}
+.toggle.on::after{left:23px;}
+
+/* nav */
+.nav{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);width:calc(100% - 26px);max-width:404px;z-index:8;background:var(--card2);backdrop-filter:blur(22px);border:1px solid var(--line);border-radius:26px;display:flex;align-items:center;padding:9px 8px;box-shadow:0 22px 46px -16px rgba(0,0,0,.6);}
+.hrow{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 10px;margin:0 -2px 2px;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+.hrow::-webkit-scrollbar{display:none;}
+.hcard{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:8px;width:72px;cursor:pointer;}
+.hcard .tic{width:58px;height:58px;border-radius:19px;display:grid;place-items:center;font-size:25px;box-shadow:0 10px 20px -8px rgba(0,0,0,.5);}
+.hcard:active .tic{transform:scale(.93);}
+.hcard .nm{font-size:10.5px;font-weight:700;color:var(--ink);text-align:center;line-height:1.15;}
+.nav button{flex:1;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--muted);font-family:inherit;font-size:10px;font-weight:700;}
+.nav button .ic{font-size:20px;transition:.2s;}
+.nav button.act{color:var(--accent);}.nav button.act .ic{transform:translateY(-2px) scale(1.1);}
+.fab{width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;font-size:30px;font-weight:300;border:none;cursor:pointer;box-shadow:0 10px 22px -6px rgba(255,93,115,.7);margin-top:-22px;}
+.fab:active{transform:scale(.92);}
+
+/* sheet */
+.overlay{position:fixed;inset:0;max-width:420px;margin:0 auto;background:rgba(20,12,30,.4);z-index:20;display:none;align-items:flex-end;backdrop-filter:blur(2px);}
+.overlay.on{display:flex;animation:fade .25s ease;}
+.sheet{width:100%;background:var(--card2);backdrop-filter:blur(24px);border-radius:26px 26px 0 0;border-top:1px solid var(--line);padding:10px 20px 30px;animation:slideup .35s cubic-bezier(.2,.8,.2,1);}
+@keyframes slideup{from{transform:translateY(100%);}to{transform:none;}}
+.sheet .grab{width:42px;height:5px;background:var(--line);border-radius:99px;margin:6px auto 16px;}
+.sheet h3{font-family:'Fraunces',serif;font-size:20px;color:var(--ink);margin-bottom:14px;}
+.qa-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;}
+.qa{display:flex;align-items:center;gap:11px;padding:15px;border-radius:16px;background:var(--card);border:1px solid var(--line);cursor:pointer;}
+.qa .ic{font-size:22px;}.qa .nm{font-weight:700;color:var(--ink);font-size:14px;}
+
+/* toast */
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:98px;width:calc(100% - 36px);max-width:384px;z-index:30;display:flex;flex-direction:column;gap:10px;pointer-events:none;}
+.toast .t{background:rgba(43,35,53,.95);color:#fff;border-radius:18px;padding:14px 16px;box-shadow:0 16px 34px -10px rgba(0,0,0,.55);backdrop-filter:blur(10px);display:flex;gap:13px;align-items:center;pointer-events:auto;animation:slideuptoast .45s cubic-bezier(.2,.8,.2,1);border:1px solid rgba(255,255,255,.12);}
+@keyframes slideuptoast{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:none;}}
+.toast .t .em{font-size:25px;}.toast .t .tx b{display:block;font-size:14px;margin-bottom:2px;}.toast .t .tx small{font-size:13px;opacity:.85;}
+.notifpill{border:none;background:var(--card2);border:1px solid var(--line);color:var(--ink);font-family:inherit;font-weight:700;font-size:11px;padding:5px 11px;border-radius:99px;cursor:pointer;}
+.breath{width:150px;height:150px;border-radius:50%;margin:8px auto;background:radial-gradient(circle,var(--accent-soft),transparent);border:3px solid var(--accent);display:grid;place-items:center;transition:transform 4s ease-in-out;color:var(--accent);font-weight:800;font-size:15px;}
+.breath.big{transform:scale(1.45);}
+</style>
+
+<div class="phone" id="phone">
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  <div class="top">
+    <div class="hi" onclick="editName()" style="cursor:pointer">
+      <div class="greet" id="greet">Salam 👋</div>
+      <h1 id="topTitle">Baş sahypa</h1>
+      <div class="date" id="date"></div>
+    </div>
+    <div class="lvlpill">
+      <span class="lv" id="lvl">Dereje 1</span>
+      <span class="nb" id="notifBtn" onclick="event.stopPropagation();askNotif()">🔔 Rugsat</span>
+    </div>
+  </div>
+  <div class="view" id="view"></div>
+  <div class="nav">
+    <button data-t="dashboard" onclick="nav('dashboard')"><span class="ic">🏠</span>Baş sahypa</button>
+    <button data-t="growth" onclick="nav('growth')"><span class="ic">📈</span>Kämillik</button>
+    <button class="fab" onclick="openSheet()"><span style="font-size:24px;line-height:1">✦</span></button>
+    <button data-t="analytics" onclick="nav('analytics')"><span class="ic">📊</span>Analitika</button>
+    <button data-t="profile" onclick="nav('profile')"><span class="ic">👤</span>Profil</button>
+  </div>
+</div>
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeSheet()">
+  <div class="sheet">
+    <div class="grab"></div><h3>Çalt goş</h3>
+    <div class="qa-grid">
+      <div class="qa" onclick="qAdd('routine')"><span class="ic">📋</span><span class="nm">Gündelik tertip</span></div>
+      <div class="qa" onclick="qAdd('tasks')"><span class="ic">✓</span><span class="nm">Etmeli iş</span></div>
+      <div class="qa" onclick="qAdd('habits')"><span class="ic">🔥</span><span class="nm">Endik</span></div>
+      <div class="qa" onclick="qAdd('goals')"><span class="ic">🎯</span><span class="nm">Maksat</span></div>
+      <div class="qa" onclick="qAdd('notes')"><span class="ic">📝</span><span class="nm">Bellik</span></div>
+      <div class="qa" onclick="qAdd('finance')"><span class="ic">💰</span><span class="nm">Çykdajy/Girdeji</span></div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<div class="alarm" id="alarm"><div class="bell">🔔</div><h2 id="alarmTitle"></h2><p id="alarmBody"></p><div class="time" id="alarmTime"></div><button onclick="dismissAlarm()">✓ Etdim / Bes et</button></div>
+<div class="modal" id="modal"><div class="m-box"></div></div>
+<input type="file" id="bookFile" accept=".txt,.pdf,.md,.text" style="display:none" onchange="onBookFile(this)">
+<input type="file" id="upFile" style="display:none" onchange="onUpFile(this)">
+
+<script>
+/* window.storage Claude.ai içinde bar; deploy edilende ýok — şonda localStorage ulanýarys (hemme zat ýatda saklanýar) */
+if(!window.storage){
+  window.storage={
+    async get(k){try{const v=localStorage.getItem(k);return v===null?null:{key:k,value:v};}catch(e){return null;}},
+    async set(k,v){try{localStorage.setItem(k,v);}catch(e){}return {key:k,value:v};},
+    async delete(k){try{localStorage.removeItem(k);}catch(e){}return {key:k,deleted:true};},
+    async list(p){const ks=[];try{for(let i=0;i<localStorage.length;i++){const kk=localStorage.key(i);if(!p||kk.indexOf(p)===0)ks.push(kk);}}catch(e){}return {keys:ks};}
+  };
+}
+const WD=['Du','Si','Ça','Pe','An','Şe','Ýe'];
+const QUOTES=[
+ ["Üstünlik — her gün gaýtalanýan kiçi tagallalaryň jemi.","Robert Kollýer"],
+ ["Iň oňat wagt — şu pursat. Başla.","Nakyl"],
+ ["Maksatsyz gün — ýelkensiz gämi.","Nakyl"],
+ ["Tertip-düzgün — erkinligiň açary.","Nakyl"],
+ ["Her uly ýol bir ädimden başlanýar.","Lao-czy"]
+];
+const MODULES=[
+ ['routine','🗓️','Gündelik tertip','linear-gradient(135deg,#2dd4bf,#0ea5a4)'],
+ ['tasks','✅','Etmeli işler','linear-gradient(135deg,#22d3ee,#0891b2)'],
+ ['habits','🔥','Endikler','linear-gradient(135deg,#fb923c,#f97316)'],
+ ['goals','🎯','Maksatlar','linear-gradient(135deg,#a78bfa,#7c3aed)'],
+ ['growth','📈','Kämillik','linear-gradient(135deg,#34d399,#10b981)'],
+ ['ai','💬','AI Kömekçi','linear-gradient(135deg,#38bdf8,#0ea5e9)'],
+ ['agents','🧠','AI Agentler','linear-gradient(135deg,#818cf8,#6366f1)'],
+ ['effective','🎓','Täsirli öwreniş','linear-gradient(135deg,#a78bfa,#8b5cf6)'],
+ ['simulator','🎮','Simulýator','linear-gradient(135deg,#2dd4bf,#22d3ee)'],
+ ['decision','⚖️','Karar merkezi','linear-gradient(135deg,#fbbf24,#f59e0b)'],
+ ['identity','🧭','Şahsyýet','linear-gradient(135deg,#c084fc,#a855f7)'],
+ ['dna','🧬','Durmuş DNA-sy','linear-gradient(135deg,#f472b6,#a78bfa)'],
+ ['gps','📍','Durmuş GPS','linear-gradient(135deg,#34d399,#0ea5e9)'],
+ ['future','⏳','Geljekki men','linear-gradient(135deg,#a78bfa,#22d3ee)'],
+ ['predict','🔮','Çaklaýjy','linear-gradient(135deg,#818cf8,#c084fc)'],
+ ['graph','🕸️','Bilim grafy','linear-gradient(135deg,#2dd4bf,#818cf8)'],
+ ['mind','🧘','Ruhy goldaw','linear-gradient(135deg,#5eead4,#2dd4bf)'],
+ ['health','❤️','Saglyk','linear-gradient(135deg,#fb7185,#e11d48)'],
+ ['finance','💰','Maliýe','linear-gradient(135deg,#fbbf24,#d97706)'],
+ ['focus','⏱️','Fokus','linear-gradient(135deg,#fb923c,#ef4444)'],
+ ['books','📚','Kitaplar','linear-gradient(135deg,#34d399,#0ea5e9)'],
+ ['journal','📔','Gündelik','linear-gradient(135deg,#22d3ee,#a78bfa)'],
+ ['notes','📝','Bellikler','linear-gradient(135deg,#38bdf8,#818cf8)'],
+ ['files','📁','Faýllar','linear-gradient(135deg,#94a3b8,#64748b)'],
+ ['vault','🔐','Sandyk','linear-gradient(135deg,#475569,#334155)'],
+ ['social','👥','Aragatnaşyk','linear-gradient(135deg,#fb7185,#f472b6)'],
+ ['analytics','📊','Analitika','linear-gradient(135deg,#a78bfa,#38bdf8)'],
+ ['calendar','📅','Kalendar','linear-gradient(135deg,#2dd4bf,#a78bfa)']
+];
+const db={profile:{xp:0,mood:-1,stress:-1,theme:'dark',vaultPin:'',name:''},goals:[],tasks:[],habits:[],notes:[],journal:[],finance:[],health:{water:0,weight:[]},focusDone:0,routine:[],books:[],files:[],identity:{vision:'',mission:'',values:[],strengths:[],weaknesses:[]},vault:[],contacts:[],decisions:[],dna:'',gps:{target:''},aiChat:[],agentChats:{}};
+let curBookId=null,curBookText='',readerFs=17,upCtx=null,vaultOpen=false,curAgent=null;
+const agentChats={};let curDec={title:'',pros:[],cons:[]};
+let cur='dashboard', chat=[];
+function loadChatHistory(){chat=Array.isArray(db.aiChat)?db.aiChat.filter(m=>!m.load):[];Object.assign(agentChats,db.agentChats||{});}
+
+document.getElementById('date').textContent=new Date().toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'});
+
+async function save(){try{await window.storage.set('mls_v4',JSON.stringify(db));}catch(e){}}
+async function saveNavState(){try{await window.storage.set('mls_nav',JSON.stringify({s:cur,b:db.lastBook||null,scroll:db.scroll||{}}));}catch(e){}}
+async function load(){
+  try{const r=await window.storage.get('mls_v4');if(r&&r.value)Object.assign(db,JSON.parse(r.value));}catch(e){}
+  loadChatHistory();
+  let navst=null;try{const n=await window.storage.get('mls_nav');if(n&&n.value)navst=JSON.parse(n.value);}catch(e){}
+  if(navst&&navst.scroll)db.scroll=navst.scroll;else if(!db.scroll)db.scroll={};
+  if(navst&&navst.b)db.lastBook=navst.b;
+  const now=new Date();db.tasks.forEach(t=>{if(t.time&&!t.fired&&new Date(t.time)<=now)t.fired=true;});
+  applyTheme();updateChrome();updateNotifBtn();
+  const last=navst?navst.s:db.lastScreen;
+  if(last==='reader'&&db.lastBook&&(db.books||[]).some(b=>b.id===db.lastBook)){openBook(db.lastBook);}
+  else if(last&&last!=='agent'&&TITLES[last]){nav(last);}
+  else nav('dashboard');
+  checkReminders();encourageCheck();setInterval(checkReminders,15000);
+}
+const uid=()=>Date.now()+''+Math.floor(Math.random()*999);
+function applyTheme(){document.getElementById('phone').setAttribute('data-theme',db.profile.theme||'dark');}
+function level(){return Math.floor(db.profile.xp/100)+1;}
+function addXP(n){db.profile.xp+=n;updateChrome();}
+function greetWord(){const h=new Date().getHours();return h<6?'Hoş gijeler':h<12?'Ertiriň haýyrly':h<18?'Gowy gün':'Agşamyň haýyrly';}
+function updateChrome(){const l=document.getElementById('lvl');if(l)l.textContent='Dereje '+level();const g=document.getElementById('greet');if(g){const n=(db.profile.name||'').trim();g.textContent=greetWord()+(n?', '+n:'')+' 👋';}}
+async function editName(){const r=await askModal({title:'Adyňy ýaz',fields:[{key:'name',label:'Adyň',value:db.profile.name||''}],okText:'Sakla'});if(!r)return;db.profile.name=(r.name||'').trim();save();updateChrome();render();}
+
+/* ---- BILDIRIŞ ---- */
+function updateNotifBtn(){const b=document.getElementById('notifBtn');try{b.style.display=(window.Notification&&Notification.permission==='granted')?'none':'inline-block';}catch(e){b.style.display='none';}}
+function askNotif(){try{if(window.Notification)Notification.requestPermission().then(updateNotifBtn);}catch(e){}}
+let actx;function beep(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();o.connect(g);g.connect(actx.destination);o.type='sine';o.frequency.value=880;g.gain.setValueAtTime(.0001,actx.currentTime);g.gain.exponentialRampToValueAtTime(.35,actx.currentTime+.05);g.gain.exponentialRampToValueAtTime(.0001,actx.currentTime+.7);o.start();o.stop(actx.currentTime+.7);}catch(e){}}
+function showToast(em,title,body){const c=document.getElementById('toast');const d=document.createElement('div');d.className='t';d.innerHTML=`<span class="em">${em}</span><div class="tx"><b>${esc(title)}</b><small>${esc(body)}</small></div>`;d.onclick=()=>d.remove();c.appendChild(d);setTimeout(()=>{if(d.parentNode)d.remove();},9000);}
+function notify(em,title,body){try{if(window.Notification&&Notification.permission==='granted')new Notification(title,{body});}catch(e){}beep();showToast(em,title,body);}
+function checkReminders(){
+  const now=new Date();let ch=false;
+  db.tasks.forEach(t=>{if(t.time&&!t.done&&!t.fired&&new Date(t.time)<=now){t.fired=true;ch=true;fireAlarm('Wagt geldi!',t.text);}});
+  const today=now.toISOString().slice(0,10),hm=now.toTimeString().slice(0,5);
+  db.habits.forEach(h=>{if(h.rt&&h.lastFired!==today&&hm>=h.rt){h.lastFired=today;ch=true;notify('🔥','Endigiňi ýerine ýetir',h.text);}});
+  (db.routine||[]).forEach(r=>{if(r.time&&r.lastDone!==today&&r.notified!==today&&hm>=r.time){r.notified=today;ch=true;fireAlarm('Gündelik tertip',r.text+' — wagty geldi!');}});
+  const md=today.slice(5);(db.contacts||[]).forEach(c=>{if(c.bday&&c.bday===md&&c.bnote!==today){c.bnote=today;ch=true;notify('🎂','Doglan gün!',c.name+' bu gün doglan güni — gutla!');}});
+  if(ch){save();if(cur==='tasks'||cur==='dashboard'||cur==='routine')render();}
+}
+let alarmBeepInt=null;
+function fireAlarm(title,body){
+  try{if(window.Notification&&Notification.permission==='granted')new Notification(title,{body});}catch(e){}
+  const a=document.getElementById('alarm');
+  if(a.classList.contains('on')){showToast('⏰',title,body);beep();return;}
+  document.getElementById('alarmTitle').textContent=title;
+  document.getElementById('alarmBody').textContent=body;
+  document.getElementById('alarmTime').textContent=new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+  a.classList.add('on');beep();clearInterval(alarmBeepInt);alarmBeepInt=setInterval(beep,1400);
+}
+function dismissAlarm(){clearInterval(alarmBeepInt);const a=document.getElementById('alarm');if(a)a.classList.remove('on');}
+function fmtTime(iso){return new Date(iso).toLocaleString('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});}
+
+/* ---- NAV ---- */
+let scrollSaveT=null,navStack=[];
+function nav(s,isBack){
+  stopBreath();
+  const v=document.getElementById('view');
+  if(v&&cur&&cur!=='reader'){const max=v.scrollHeight-v.clientHeight;(db.scroll||(db.scroll={}))[cur]=max>0?v.scrollTop/max:0;}
+  if(!isBack&&cur&&cur!==s){navStack.push(cur);if(navStack.length>30)navStack.shift();try{history.pushState({mls:1},'');}catch(e){}}
+  cur=s;db.lastScreen=s;
+  document.querySelectorAll('.nav button[data-t]').forEach(b=>b.classList.toggle('act',b.dataset.t===s));
+  render();saveNavState();
+}
+function saveSoon(){clearTimeout(scrollSaveT);scrollSaveT=setTimeout(saveNavState,500);}
+function onViewScroll(){
+  if(cur==='reader')return;const v=document.getElementById('view');if(!v)return;
+  const max=v.scrollHeight-v.clientHeight;(db.scroll||(db.scroll={}))[cur]=max>0?v.scrollTop/max:0;saveSoon();
+}
+function restoreScroll(){
+  const v=document.getElementById('view');if(!v)return;const f=(db.scroll&&db.scroll[cur])||0;
+  const set=()=>{const max=v.scrollHeight-v.clientHeight;v.scrollTop=f*max;};
+  requestAnimationFrame(()=>{set();setTimeout(set,90);setTimeout(set,220);});
+}
+function back(){if(navStack.length){try{history.back();return;}catch(e){}}const t=navStack.pop()||'dashboard';nav(t,true);}
+window.addEventListener('popstate',function(){if(navStack.length){nav(navStack.pop(),true);}});
+const TITLES={dashboard:'Baş sahypa',routine:'Gündelik tertip',goals:'Maksatlar',tasks:'Etmeli işler',habits:'Endikler',calendar:'Kalendar',notes:'Bellikler',journal:'Gündelik',finance:'Maliýe',health:'Saglyk',focus:'Fokus',learning:'Okuw merkezi',books:'Kitaplar',files:'Faýllar',reader:'Okaýjy',effective:'Täsirli öwreniş',identity:'Şahsyýet',vault:'Sandyk',social:'Aragatnaşyk',simulator:'Durmuş simulýatory',agents:'AI Agentler',agent:'AI Agent',decision:'Karar merkezi',dna:'Durmuş DNA-sy',gps:'Durmuş GPS',future:'Geljekki men',predict:'Çaklaýjy ulgam',graph:'Bilim grafy',ai:'AI Kömekçi',growth:'Kämillik merkezi',mind:'Ruhy goldaw',analytics:'Analitika',profile:'Profil'};
+function render(){
+  document.getElementById('topTitle').textContent=TITLES[cur]||'';
+  const v=document.getElementById('view');
+  v.innerHTML=({dashboard:rDash,routine:rRoutine,goals:rGoals,tasks:rTasks,habits:rHabits,notes:rNotes,journal:rJournal,finance:rFinance,health:rHealth,focus:rFocus,ai:rAI,growth:rGrowth,mind:rMind,books:rBooks,reader:rReader,files:rFiles,effective:rEffective,identity:rIdentity,vault:rVault,social:rSocial,simulator:rSimulator,agents:rAgents,agent:rAgent,decision:rDecision,dna:rDna,gps:rGps,future:rFuture,predict:rPredict,graph:rGraph,analytics:rAnalytics,profile:rProfile,calendar:rSoon,learning:rEffective}[cur]||rSoon)();
+  if(cur==='focus')paintTimer();
+  if(cur==='ai'||cur==='agent')scrollChat();
+  if(cur==='reader')setupReader();
+  else if(cur!=='ai'&&cur!=='agent'){v.onscroll=onViewScroll;restoreScroll();}
+  if(cur==='files'||cur==='notes')loadThumbs();
+  if(cur==='effective'&&sess)paintSess();
+}
+function head(t,c){return `<div class="scr-title"><div class="bk" onclick="back()">←</div><h2>${t}</h2>${c!=null?`<span class="cnt">${c}</span>`:''}</div>`;}
+
+/* ---- DASHBOARD ---- */
+function prodScore(){
+  const today=new Date().toISOString().slice(0,10);
+  const td=db.tasks.filter(t=>t.time?t.time.slice(0,10)===today:true);
+  const tDone=td.filter(t=>t.done).length, tTot=td.length;
+  const di=new Date().getDay();const dix=di===0?6:di-1;
+  const hDone=db.habits.filter(h=>h.days[dix]).length, hTot=db.habits.length;
+  let s=0,parts=0;
+  if(tTot){s+=(tDone/tTot)*100;parts++;}
+  if(hTot){s+=(hDone/hTot)*100;parts++;}
+  return parts?Math.round(s/parts):0;
+}
+function rDash(){
+  const ps=prodScore();const gp=growthOverall();const circ=2*Math.PI*42;const off=circ-(ps/100)*circ;
+  const today=new Date().toISOString().slice(0,10);
+  const tLeft=db.tasks.filter(t=>!t.done).length;
+  const di=new Date().getDay();const dix=di===0?6:di-1;
+  const hToday=db.habits.filter(h=>h.days[dix]).length;
+  const q=QUOTES[new Date().getDate()%QUOTES.length];
+  const moods=['😞','😕','😐','🙂','😄'];
+  const sug = tLeft? `Bu gün ${tLeft} işiň galdy. Iň möhümini ilki et 💪` : 'Ähli işiň gutardy — özüňi sylagla! 🎉';
+  return `
+  <div style="display:flex;align-items:center;gap:11px;padding:4px 2px 12px;">
+    <img src="icon-192.png" alt="logo" style="width:46px;height:46px;border-radius:13px;box-shadow:0 8px 20px -6px rgba(0,0,0,.55);" onerror="this.style.display='none'">
+    <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:20px;background:linear-gradient(90deg,#22d3ee,#a78bfa);-webkit-background-clip:text;background-clip:text;color:transparent;">My Life System</div>
+  </div>
+  <div class="card"><div class="hero">
+    <div class="ring"><svg width="96" height="96"><circle cx="48" cy="48" r="42" stroke="var(--accent-soft)" stroke-width="9" fill="none"/><circle cx="48" cy="48" r="42" stroke="url(#g)" stroke-width="9" fill="none" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${off}"/><defs><linearGradient id="g"><stop offset="0%" stop-color="#2dd4bf"/><stop offset="100%" stop-color="#22d3ee"/></linearGradient></defs></svg><div class="pscore"><b>${ps}</b><small>SKOR</small></div></div>
+    <div class="hx"><h3>Bu günki ýagdaý</h3><p>${tLeft} iş galdy · ${hToday}/${db.habits.length||0} endik · ${level()}-nji dereje</p></div>
+  </div></div>
+  <div class="sect-label" style="margin-top:14px">Çalt giriş</div>
+  <div class="hrow">${MODULES.slice(0,12).map(m=>`<div class="hcard" onclick="nav('${m[0]}')"><div class="tic" style="background:${m[3]}">${m[1]}</div><div class="nm">${m[2]}</div></div>`).join('')}</div>
+  <div class="mini-stats">
+    <div class="ms"><b>${db.goals.length}</b><small>Maksat</small></div>
+    <div class="ms"><b>${db.tasks.filter(t=>t.done).length}</b><small>Bitirilen</small></div>
+    <div class="ms"><b>${db.profile.xp}</b><small>XP</small></div>
+  </div>
+  <div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><span style="font-weight:800;color:var(--ink);font-size:14px;">📈 Kämillik derejäň</span><span style="font-weight:800;color:var(--accent);font-size:16px;">${gp}%</span></div><div class="bar" style="margin:0 0 8px;"><i style="width:${gp}%"></i></div><div style="font-size:12.5px;color:var(--muted);line-height:1.5;">${growthMsg(gp)}</div><button class="btn-pri" style="width:100%;margin-top:12px;padding:11px;border-radius:13px;border:none;font-weight:700;font-family:inherit;cursor:pointer;" onclick="nav('growth')">Doly analizi gör →</button></div>
+  <div class="card ai-card"><div class="hd">🤖 AI Maslahat <span class="tag">AI</span></div><p id="dashSug">${sug}</p><button class="btn-pri" style="width:100%;margin-top:12px;padding:11px;border-radius:13px;border:none;font-weight:700;font-family:inherit;cursor:pointer;" onclick="aiPlan()">📋 AI bu güni tertiplesin</button></div>
+  ${dashRoutineCard()}
+  ${dashOrderCard()}
+  ${dashBookCard()}
+  ${dashWarnCard()}
+  ${dashHardCard()}
+  <div class="card"><div style="font-weight:800;color:var(--ink);font-size:14px;margin-bottom:4px;">Bu gün näme duýýaň?</div>
+    <div class="mood">${moods.map((m,i)=>`<span class="${db.profile.mood===i?'sel':''}" onclick="setMood(${i})">${m}</span>`).join('')}</div></div>
+  <div class="card quote"><div class="q">"${q[0]}"</div><div class="a">— ${q[1]}</div></div>
+  <div class="sect-label">Modullar</div>
+  <div class="grid">${MODULES.map(m=>`<div class="tile" onclick="nav('${m[0]}')"><div class="tic" style="background:${m[3]}">${m[1]}</div><div class="nm">${m[2]}</div></div>`).join('')}</div>`;
+}
+function setMood(i){db.profile.mood=i;const today=new Date().toISOString().slice(0,10);let j=db.journal.find(x=>x.date===today);if(j)j.mood=i;save();render();}
+
+/* ---- GÜNDELIK TERTIP / ROUTINE ---- */
+function todayStr(){return new Date().toISOString().slice(0,10);}
+function rDoneToday(r){return r.lastDone===todayStr();}
+function routineStats(){const all=db.routine||[];return {done:all.filter(rDoneToday).length,total:all.length};}
+function rRoutine(){
+  const all=db.routine||[];const st=routineStats();const C=2*Math.PI*24;const off=C-(st.total?st.done/st.total:0)*C;
+  const now=new Date().toTimeString().slice(0,5);
+  const items=all.length?all.slice().sort((a,b)=>((a.time||'99')<(b.time||'99')?-1:1)).map(r=>{const d=rDoneToday(r);const over=!d&&r.time&&now>r.time;return `<div class="card"><div class="row"><div class="check ${d?'done':''}" onclick="toggleRoutine('${r.id}')"></div><div class="tcol"><div class="ctext ${d?'done':''}">${esc(r.text)}</div>${r.time?`<span class="timebadge ${over?'over':''}">${over?'⚠️ wagt geçdi':'🕐'} ${r.time}</span>`:''}</div><span class="del" onclick="rmRoutine('${r.id}')">×</span></div></div>`;}).join(''):`<div class="empty">Her gün hökman etmeli işleriňi goş 📋</div>`;
+  return head('Gündelik tertip',st.total?st.done+'/'+st.total:null)+`
+  <div class="card"><div class="rt-prog"><div class="rr"><svg width="54" height="54"><circle cx="27" cy="27" r="24" stroke="var(--accent-soft)" stroke-width="6" fill="none"/><circle cx="27" cy="27" r="24" stroke="url(#rg)" stroke-width="6" fill="none" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${off}" transform="rotate(-90 27 27)"/><defs><linearGradient id="rg"><stop offset="0%" stop-color="#7c6cff"/><stop offset="100%" stop-color="#b07cff"/></linearGradient></defs></svg><div class="pc">${st.total?Math.round(st.done/st.total*100):0}%</div></div><div style="flex:1"><div style="font-weight:800;color:var(--ink);font-size:15px;">Bu günki hökmany işler</div><div style="font-size:13px;color:var(--muted);margin-top:3px;">${st.total?(st.done===st.total?'Hemmesi bitirildi — berekella! 🎉':(st.total-st.done)+' iş galdy, dowam et 💪'):'Tertip entek boş'}</div></div></div></div>
+  <div class="addbar"><input id="i" placeholder="Hökmany gündelik iş..." onkeydown="if(event.key==='Enter')addRoutine()"><button onclick="addRoutine()">+</button></div>
+  <div class="timeset"><span>🕐 Ýatlatma wagty:</span><input type="time" id="rt"></div>`+items;
+}
+function addRoutine(){const e=document.getElementById('i');const v=e.value.trim();if(!v)return;const t=document.getElementById('rt').value||'';if(!db.routine)db.routine=[];db.routine.push({id:uid(),text:v,time:t,lastDone:'',notified:''});if(t)askNotif();addXP(2);save();render();}
+function toggleRoutine(id){const r=db.routine.find(x=>x.id===id);if(rDoneToday(r)){r.lastDone='';}else{r.lastDone=todayStr();addXP(4);}save();render();}
+function rmRoutine(id){db.routine=db.routine.filter(x=>x.id!==id);save();render();}
+
+/* ---- GÜN TERTIBI (AI yzygiderlik) ---- */
+function todayOrder(){
+  const list=[];
+  (db.routine||[]).filter(r=>!rDoneToday(r)).forEach(r=>list.push({text:r.text,time:r.time||'',kind:'tertip',w:1}));
+  db.tasks.filter(x=>!x.done).forEach(x=>list.push({text:x.text,time:x.time?x.time.slice(11,16):'',kind:'iş',w:2}));
+  list.sort((a,b)=>{if(a.time&&b.time)return a.time<b.time?-1:1;if(a.time)return -1;if(b.time)return 1;return a.w-b.w;});
+  return list;
+}
+function dashRoutineCard(){
+  const st=routineStats();if(!st.total)return '';
+  const pct=Math.round(st.done/st.total*100);
+  return `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><span style="font-weight:800;color:var(--ink);font-size:14px;">📋 Gündelik hökmany işler</span><span style="font-weight:800;color:var(--accent);font-size:15px;">${st.done}/${st.total}</span></div><div class="bar" style="margin:0 0 8px;"><i style="width:${pct}%"></i></div><div style="font-size:12.5px;color:var(--muted)">${st.done===st.total?'Bu günki ähli hökmany işler bitirildi 🎉':'Hökmany işleriňi unutma — AI wagtynda ýatladar 💪'}</div><button class="btn-pri" style="width:100%;margin-top:12px;padding:11px;border-radius:13px;border:none;font-weight:700;font-family:inherit;cursor:pointer;" onclick="nav('routine')">Tertibi aç →</button></div>`;
+}
+function dashOrderCard(){
+  const o=todayOrder();
+  if(!o.length)return '';
+  const top=o.slice(0,6);
+  return `<div class="card"><div style="font-weight:800;color:var(--ink);font-size:14px;margin-bottom:3px;">🔢 Bu günki tertip</div><div style="font-size:11.5px;color:var(--muted);margin-bottom:6px;">AI iň möhüminden yzygiderli düzdi</div>${top.map((x,i)=>`<div class="pri-item"><div class="num">${i+1}</div><div class="pt">${esc(x.text)}</div>${x.time?`<span class="ptime">${x.time}</span>`:`<span class="ptime" style="background:var(--card2);color:var(--muted)">${x.kind}</span>`}</div>`).join('')}</div>`;
+}
+function dashWarnCard(){
+  const now=new Date().toTimeString().slice(0,5);
+  const undoneR=(db.routine||[]).filter(r=>!rDoneToday(r));
+  const undoneT=db.tasks.filter(x=>!x.done);
+  if(!undoneR.length&&!undoneT.length)return '';
+  const items=[];
+  undoneR.forEach(r=>items.push((r.time&&now>r.time?'⚠️ ':'')+esc(r.text)+(r.time?` (${r.time})`:'')+' — gündelik'));
+  undoneT.slice(0,5).forEach(x=>items.push(esc(x.text)+(x.time?` (${fmtTime(x.time)})`:'')));
+  return `<div class="card warn-card"><div class="hd">⚠️ Etmesäň şular galýar</div><ul>${items.slice(0,7).map(i=>`<li>${i}</li>`).join('')}</ul><div style="font-size:12.5px;color:var(--ink);margin-top:8px;font-weight:600;">Häzir biri bilen başla — soňa goýma, ýogsam ertir agram bolar 💪</div></div>`;
+}
+function dashHardCard(){
+  const hard=lifeAreas().slice().sort((a,b)=>a.v-b.v).filter(a=>a.v<60).slice(0,3);
+  if(!hard.length)return '';
+  return `<div class="card"><div style="font-weight:800;color:var(--ink);font-size:14px;margin-bottom:8px;">🧗 Saňa häzir kyn taraplar</div><div style="display:flex;flex-wrap:wrap;">${hard.map(a=>`<span class="hard-chip"><span style="width:10px;height:10px;border-radius:50%;background:${a.c};display:inline-block"></span>${a.n} · ${a.v}%</span>`).join('')}</div><div style="font-size:12.5px;color:var(--muted);margin-top:10px;line-height:1.5;">Bu ugurlara her gün azajyk üns ber — kämillik şolardan başlaýar.</div></div>`;
+}
+function encourageCheck(){
+  const now=new Date().toTimeString().slice(0,5);
+  const overR=(db.routine||[]).filter(r=>!rDoneToday(r)&&r.time&&now>r.time).length;
+  const overT=db.tasks.filter(x=>!x.done&&x.time&&new Date(x.time)<new Date()).length;
+  if(overR+overT>=2)setTimeout(()=>showToast('💪','Yza galma!',(overR+overT)+' iş wagtyndan galdy. Häzir biri bilen başla — başararsyň!'),1300);
+}
+
+/* ---- KITAPLAR / READER ---- */
+const COVERS=['linear-gradient(135deg,#34d399,#0ea5e9)','linear-gradient(135deg,#22d3ee,#0891b2)','linear-gradient(135deg,#a78bfa,#7c3aed)','linear-gradient(135deg,#fbbf24,#d97706)','linear-gradient(135deg,#2dd4bf,#a78bfa)'];
+function rBooks(){
+  const list=(db.books||[]).length?db.books.slice().sort((a,b)=>b.added-a.added).map((b,i)=>{const pct=Math.round((b.pos||0)*100);return `<div class="card"><div class="book-item" onclick="openBook('${b.id}')"><div class="book-cover" style="background:${COVERS[i%COVERS.length]}">📖</div><div class="book-meta"><div class="bt">${esc(b.title)}</div><div class="bp">${pct>0?(pct>=98?'Okalyp gutaryldy ✓':'Dowam et · '+pct+'%'):'Entek başlanmady'} · ${Math.round(b.len/1000)}k harp</div><div class="book-bar"><i style="width:${pct}%"></i></div></div><span class="del" onclick="event.stopPropagation();rmBook('${b.id}')">×</span></div></div>`;}).join(''):`<div class="empty">Kitap goş we okamaga başla 📚</div>`;
+  return head('Kitaplar',(db.books||[]).length||null)+`
+  <div class="file-btn" onclick="pickBook()">📂 Faýldan kitap goş (.txt, .pdf, .md)</div>
+  <div class="card"><div style="font-weight:800;color:var(--ink);margin-bottom:8px;">✍️ Ýa-da tekst goý</div><input id="bktitle" placeholder="Kitabyň ady" style="width:100%;border:1.5px solid var(--line);background:var(--card);border-radius:13px;padding:11px 13px;font-family:inherit;font-size:14px;color:var(--ink);outline:none;margin-bottom:9px;"><textarea id="bktext" placeholder="Tekstini şu ýere goý..." style="width:100%;min-height:80px;border:1.5px solid var(--line);background:var(--card);border-radius:13px;padding:11px 13px;font-family:inherit;font-size:14px;color:var(--ink);resize:vertical;outline:none;"></textarea><button class="btn-pri" style="width:100%;margin-top:9px;padding:11px;border-radius:13px;border:none;font-weight:700;font-family:inherit;cursor:pointer;" onclick="addBookPaste()">Goş</button></div>`+list;
+}
+function pickBook(){document.getElementById('bookFile').click();}
+async function onBookFile(input){
+  const f=input.files&&input.files[0];if(!f)return;
+  showToast('⏳','Ýüklenýär',f.name);
+  try{
+    let text='';
+    if(/\.pdf$/i.test(f.name)){text=await readPdf(f);}else{text=await f.text();}
+    if(!text||!text.trim()){showToast('⚠️','Boş','Faýldan tekst alyp bolmady');input.value='';return;}
+    await addBook(f.name.replace(/\.[^.]+$/,''),text);
+  }catch(e){showToast('⚠️','Ýalňyşlyk','Bu faýly okap bolmady');}
+  input.value='';
+}
+function loadScript(src){return new Promise((res,rej)=>{if(document.querySelector('script[data-src="'+src+'"]')){res();return;}const s=document.createElement('script');s.src=src;s.setAttribute('data-src',src);s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
+async function readPdf(f){
+  await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
+  const pdfjs=window.pdfjsLib;pdfjs.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  const buf=await f.arrayBuffer();const doc=await pdfjs.getDocument({data:buf}).promise;
+  let out='';const N=Math.min(doc.numPages,400);
+  for(let p=1;p<=N;p++){const pg=await doc.getPage(p);const tc=await pg.getTextContent();out+=tc.items.map(i=>i.str).join(' ')+'\n\n';}
+  return out;
+}
+async function addBook(title,text){
+  const id=uid();
+  try{await idbSet('book_'+id,text);}catch(e){showToast('⚠️','Saklanmady','Brauzeriň ýadynda ýer ýok bolup biler');return;}
+  if(!db.books)db.books=[];
+  db.books.push({id,title:title||'Kitap',len:text.length,pos:0,added:Date.now()});
+  addXP(5);save();if(cur==='books')render();
+  showToast('📚','Goşuldy',(title||'Kitap')+' kitaplara goşuldy');
+}
+function addBookPaste(){const t=document.getElementById('bktitle').value.trim();const x=document.getElementById('bktext').value;if(!t){showToast('⚠️','At ýok','Kitabyň adyny ýaz');return;}if(!x.trim()){showToast('⚠️','Boş','Tekst goý');return;}addBook(t,x);}
+function rmBook(id){db.books=db.books.filter(b=>b.id!==id);idbDel('book_'+id);save();render();}
+async function openBook(id){
+  const b=db.books.find(x=>x.id===id);if(!b)return;
+  curBookId=id;db.lastBook=id;curBookText='Ýüklenýär…';nav('reader');
+  try{const v=await idbGet('book_'+id);curBookText=(typeof v==='string'&&v)?v:'(Tekst tapylmady)';}catch(e){curBookText='(Tekst tapylmady)';}
+  if(cur==='reader')render();
+}
+function rReader(){
+  const b=db.books.find(x=>x.id===curBookId);const pct=Math.round((b&&b.pos?b.pos:0)*100);
+  document.getElementById('topTitle').textContent=b?b.title:'Okaýjy';
+  return `<div class="reader-wrap"><div class="rprog"><i id="rprogbar" style="width:${pct}%"></i></div>
+  <div class="reader-head"><div class="bk" onclick="back()">←</div><div class="rt">${esc(b?b.title:'')}</div><span class="pct" id="rpct">${pct}%</span><button class="rfs" onclick="readerFont(-1)">A−</button><button class="rfs" onclick="readerFont(1)">A+</button></div>
+  <div class="ai-mini">🤖 <b>AI:</b> <span onclick="bookAI('jemle')" style="color:var(--accent);cursor:pointer;font-weight:700">Jemle</span> · <span onclick="bookAI('pikir')" style="color:var(--accent);cursor:pointer;font-weight:700">Esasy pikir</span><div id="bookAiOut" style="margin-top:8px;"></div></div>
+  <div class="reader-body" style="--rfs:${readerFs}px">${esc(curBookText)}</div></div>`;
+}
+function readerFont(d){readerFs=Math.max(13,Math.min(26,readerFs+d));const b=document.querySelector('.reader-body');if(b)b.style.setProperty('--rfs',readerFs+'px');}
+let readerSaveT=null;
+function setupReader(){
+  const v=document.getElementById('view');const b=db.books.find(x=>x.id===curBookId);if(!v||!b)return;
+  setTimeout(()=>{const max=v.scrollHeight-v.clientHeight;v.scrollTop=(b.pos||0)*max;},70);
+  v.onscroll=()=>{if(cur!=='reader')return;const max=v.scrollHeight-v.clientHeight;const frac=max>0?Math.min(1,v.scrollTop/max):0;b.pos=frac;const bar=document.getElementById('rprogbar'),pc=document.getElementById('rpct');if(bar)bar.style.width=Math.round(frac*100)+'%';if(pc)pc.textContent=Math.round(frac*100)+'%';clearTimeout(readerSaveT);readerSaveT=setTimeout(save,900);};
+}
+async function bookAI(mode){
+  const out=document.getElementById('bookAiOut');if(out)out.textContent='AI okaýar…';
+  const excerpt=curBookText.slice(0,7000);
+  const sys=mode==='jemle'?"Sen kitap kömekçisi. Diňe TÜRKMEN dilinde, berlen tekstiň gysga we düşnükli jemini ber.":"Sen kitap kömekçisi. Diňe TÜRKMEN dilinde, berlen tekstiň esasy pikirini we sapagyny gysgaça düşündir.";
+  try{const txt=await aiCall(sys,"Tekst:\n"+excerpt,600);if(out)out.innerHTML=esc(txt||'Jogap ýok').replace(/\n/g,'<br>');}
+  catch(e){if(out)out.textContent='AI jogap berip bilmedi. Internet barlygyny barla — AI diňe Claude.ai içinde işleýär.';}
+}
+function dashBookCard(){
+  const reading=(db.books||[]).filter(b=>(b.pos||0)>0.01&&(b.pos||0)<0.98).sort((a,b)=>b.added-a.added)[0];
+  if(!reading)return '';
+  return `<div class="card"><div class="book-item" onclick="openBook('${reading.id}')"><div class="book-cover" style="background:linear-gradient(135deg,#6f9479,#506b8a)">📖</div><div class="book-meta"><div style="font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;">Okamagy dowam et</div><div class="bt">${esc(reading.title)}</div><div class="book-bar"><i style="width:${Math.round(reading.pos*100)}%"></i></div></div></div></div>`;
+}
+
+/* ---- IndexedDB (uly faýllar, GB çenli) ---- */
+let _idb=null;
+function idb(){return _idb||(_idb=new Promise((res,rej)=>{const r=indexedDB.open('mls_store',1);r.onupgradeneeded=e=>{e.target.result.createObjectStore('blobs');};r.onsuccess=e=>res(e.target.result);r.onerror=()=>rej(r.error);}));}
+async function idbSet(k,v){const d=await idb();return new Promise((res,rej)=>{const tx=d.transaction('blobs','readwrite');tx.objectStore('blobs').put(v,k);tx.oncomplete=()=>res(1);tx.onerror=()=>rej(tx.error);});}
+async function idbGet(k){const d=await idb();return new Promise((res,rej)=>{const tx=d.transaction('blobs','readonly');const rq=tx.objectStore('blobs').get(k);rq.onsuccess=()=>res(rq.result);rq.onerror=()=>rej(rq.error);});}
+async function idbDel(k){const d=await idb();return new Promise((res)=>{const tx=d.transaction('blobs','readwrite');tx.objectStore('blobs').delete(k);tx.oncomplete=()=>res(1);tx.onerror=()=>res(0);});}
+function fmtSize(b){if(b<1024)return b+' B';if(b<1048576)return (b/1024).toFixed(0)+' KB';if(b<1073741824)return (b/1048576).toFixed(1)+' MB';return (b/1073741824).toFixed(2)+' GB';}
+function fileEmoji(t,n){t=t||'';if(t.startsWith('image'))return '🖼';if(t.startsWith('video'))return '🎬';if(t.startsWith('audio'))return '🎵';if(t.includes('pdf')||/\.pdf$/i.test(n))return '📕';if(/\.(zip|rar|7z)$/i.test(n))return '🗜';if(/\.(docx?|odt)$/i.test(n))return '📄';if(/\.(xlsx?|csv)$/i.test(n))return '📊';return '📎';}
+
+/* ---- FAÝLLAR / FILES ---- */
+function pickUp(ctx){upCtx=ctx;document.getElementById('upFile').click();}
+async function onUpFile(input){
+  const f=input.files&&input.files[0];if(!f){return;}
+  const ctx=upCtx;upCtx=null;input.value='';
+  showToast('⏳','Ýüklenýär',f.name+' · '+fmtSize(f.size));
+  try{
+    if(ctx==='files'){const id=uid();await idbSet('file_'+id,f);db.files.push({id,name:f.name,type:f.type,size:f.size,added:Date.now()});addXP(2);save();if(cur==='files')render();loadThumbs();showToast('📎','Goşuldy',f.name);}
+    else if(ctx==='vault'){const id=uid();const key='vf_'+id;await idbSet(key,f);db.vault.push({id,kind:'file',label:f.name,ftype:f.type,fsize:f.size,fkey:key});addXP(1);save();if(cur==='vault')render();showToast('🔐','Gizlendi',f.name);}
+    else if(ctx&&ctx.indexOf('note:')===0){const nid=ctx.slice(5);const n=db.notes.find(x=>x.id===nid);if(n){if(n.fkey)await idbDel(n.fkey);const key='nf_'+uid();await idbSet(key,f);n.file={name:f.name,type:f.type,size:f.size};n.fkey=key;save();if(cur==='notes')render();loadThumbs();showToast('📎','Bellige goşuldy',f.name);}}
+  }catch(e){showToast('⚠️','Ýalňyşlyk','Faýly saklap bolmady');}
+}
+async function openStored(key,name){try{const blob=await idbGet(key);if(!blob){showToast('⚠️','Ýok','Faýl tapylmady');return;}const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name||'fayl';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000);}catch(e){showToast('⚠️','Ýalňyşlyk','Açyp bolmady');}}
+function rmFile(id){idbDel('file_'+id);db.files=db.files.filter(x=>x.id!==id);save();render();}
+function rFiles(){
+  const list=(db.files||[]).length?db.files.slice().sort((a,b)=>b.added-a.added).map(f=>{
+    const img=(f.type||'').startsWith('image');
+    return `<div class="card"><div class="row"><div class="fic ${img?'isimg':''}" id="${img?'thumb_file_'+f.id:''}" style="${img?'':'font-size:23px;'}">${img?'':fileEmoji(f.type,f.name)}</div><div style="flex:1;min-width:0"><div class="txt" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(f.name)}</div><small style="color:var(--muted)">${fmtSize(f.size)}</small></div><button class="rfs" style="width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;" onclick="openStored('file_${f.id}','${esc(f.name)}')">⬇</button><span class="del" onclick="rmFile('${f.id}')">×</span></div></div>`;
+  }).join(''):`<div class="empty">Islendik faýly ýükle we sakla 📎</div>`;
+  return head('Faýllar',(db.files||[]).length||null)+`<div class="file-btn" onclick="pickUp('files')">📂 Faýl ýükle (islendik görnüş, uly faýllar hem bolýar)</div>`+list;
+}
+function loadThumbs(){
+  document.querySelectorAll('[id^="thumb_"]').forEach(async el=>{
+    if(el.dataset.loaded)return;const key=el.id.replace('thumb_','');
+    try{const blob=await idbGet(key);if(blob){const url=URL.createObjectURL(blob);el.style.backgroundImage='url('+url+')';el.classList.add('isimg');el.dataset.loaded='1';}}catch(e){}
+  });
+}
+
+/* ---- TÄSIRLI ÖWRENIŞ / EFFECTIVE LEARNING ---- */
+const TECHS=[
+ ['🍅','Pomodoro','25 min bökdençsiz işle, 5 min dynç al. 4 sikldan soň uzyn dynç. Ünsi ýiteltmän köp iş bitirýär.','linear-gradient(135deg,#c08050,#9a6038)'],
+ ['🧠','Aktiw ýatlama','Okanyňy ýapyp, ýadyňdan gaýtadan aýt ýa-da ýaz. Diňe gaýta-gaýta okamakdan 2 esse güýçli.','linear-gradient(135deg,#9082a6,#6e6088)'],
+ ['🔁','Aralykly gaýtalama','Öwreneniňi 1, 3, 7, 14-nji günlerde gaýtala — maglumat uzak möhletli ýada geçýär.','linear-gradient(135deg,#6f9479,#506b8a)'],
+ ['🌊','Çuňňur iş (Deep Work)','Telefony aýyr, 1 işe 60–90 min doly üns ber. Iň kyn işi ir bilen, dynç alan kelläň bilen et.','linear-gradient(135deg,#6e88a8,#506b8a)'],
+ ['🐸','Bakany ir iý','Iň kyn ýa ýakymsyz işi günüň başynda et — galan ähli zat aňsat görünýär.','linear-gradient(135deg,#b06a6a,#8a4f4f)'],
+ ['⚡','2 minut düzgüni','2 minutda bitýän işi soňa goýma — şol bada et. Kiçi işler ýygnanyp agram bolmaýar.','linear-gradient(135deg,#b89a5e,#8a7340)']
+];
+let sess=null,sessInt=null,sessMins=25;
+function setSessMins(m){if(sess)return;sessMins=m;render();}
+function buildBlocks(mins){
+  if(mins<=25)return [['Gözden geçir',180],['Çuňňur okamak / iş',1020],['Aktiw ýatlama & test',300]];
+  if(mins<=50)return [['Gözden geçir',300],['Çuňňur iş 1',1200],['Gysga dynç',300],['Çuňňur iş 2',900],['Aktiw ýatlama',300]];
+  return [['Meýilnama & gözden geçir',420],['Deep Work 1',1800],['Dynç',480],['Deep Work 2',1800],['Aktiw ýatlama & test',900]];
+}
+function startSession(){
+  const t=document.getElementById('sesstopic');const topic=t?t.value.trim():'';
+  if(!topic){showToast('✍️','Mowzuk','Näme öwrenjegiňi/etjegiňi ýaz');return;}
+  sess={topic,blocks:buildBlocks(sessMins),idx:0,running:true};sess.remaining=sess.blocks[0][1];
+  clearInterval(sessInt);sessInt=setInterval(sessTick,1000);askNotif();render();
+}
+function sessTick(){
+  if(!sess||!sess.running)return;sess.remaining--;
+  if(sess.remaining<=0){
+    notify('✅','Blok gutardy',sess.blocks[sess.idx][0]+' tamamlandy');sess.idx++;
+    if(sess.idx>=sess.blocks.length){clearInterval(sessInt);addXP(15);db.focusDone++;save();const tp=sess.topic;sess=null;fireAlarm('Sessiýa gutardy! 🎉','Berekella — '+tp+' boýunça täsirli işlediň');render();return;}
+    sess.remaining=sess.blocks[sess.idx][1];
+  }
+  paintSess();
+}
+function paintSess(){const el=document.getElementById('sesstime');if(!sess||!el)return;const m=String(Math.floor(sess.remaining/60)).padStart(2,'0'),s=String(sess.remaining%60).padStart(2,'0');el.textContent=m+':'+s;const lab=document.getElementById('sesslabel');if(lab)lab.textContent=(sess.idx+1)+'/'+sess.blocks.length+' · '+sess.blocks[sess.idx][0];}
+function pauseSession(){if(!sess)return;sess.running=!sess.running;const b=document.getElementById('sessbtn');if(b)b.textContent=sess.running?'Dur':'Dowam';}
+function skipBlock(){if(sess)sess.remaining=1;}
+function stopSession(){clearInterval(sessInt);sess=null;render();}
+function rEffective(){
+  const techs=TECHS.map(t=>`<div class="card"><div class="tech"><div class="te" style="background:${t[3]}">${t[0]}</div><div><div class="tt">${t[1]}</div><div class="td">${t[2]}</div></div></div></div>`).join('');
+  let sessUI;
+  if(sess){
+    sessUI=`<div class="card"><div class="timer"><div style="font-size:13px;color:var(--muted);font-weight:700;margin-bottom:4px;">${esc(sess.topic)}</div><div class="tt" id="sesstime">--:--</div><div id="sesslabel" style="color:var(--accent);font-weight:800;margin-top:6px;font-size:13px;"></div><div class="ctrls"><button class="btn-pri" id="sessbtn" onclick="pauseSession()">${sess.running?'Dur':'Dowam'}</button><button class="btn-sec" onclick="skipBlock()">Indiki ▷</button><button class="btn-sec" onclick="stopSession()">Sakla</button></div></div></div>`;
+  }else{
+    sessUI=`<div class="card"><div style="font-weight:800;color:var(--ink);margin-bottom:8px;">🎯 Täsirli sessiýa başlat</div><input id="sesstopic" placeholder="Näme öwrenjek/etjek? (mysal: Iňlis sözleri)" style="width:100%;border:1.5px solid var(--line);background:var(--card);border-radius:13px;padding:12px 14px;font-family:inherit;font-size:14px;color:var(--ink);outline:none;margin-bottom:10px;"><div style="display:flex;gap:8px;margin-bottom:12px;">${[25,50,90].map(m=>`<button onclick="setSessMins(${m})" style="flex:1;padding:11px;border-radius:12px;border:1px solid ${sessMins===m?'var(--accent)':'var(--line)'};background:${sessMins===m?'var(--accent-soft)':'var(--card)'};color:var(--ink);font-weight:700;font-family:inherit;cursor:pointer;">${m} min</button>`).join('')}</div><button class="btn-pri" style="width:100%;padding:12px;border-radius:13px;border:none;font-weight:700;font-family:inherit;cursor:pointer;" onclick="startSession()">▶ Başla</button><div style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5;">Sessiýa awtomatiki bloklara bölünýär: gözden geçir → çuňňur iş → aktiw ýatlama. Her blok gutaranda signal berýär.</div></div>`;
+  }
+  return head('Täsirli öwreniş')+`
+  <div class="card ai-card"><div class="hd">🤖 Nireden başlamaly? <span class="tag">AI</span></div><p id="startOut">Düwmä bas — AI maksatlaryňa we işleriňe seredip, nämeden, haýsy yzygiderlikde we näçe wagt başlamalydygyňy aýdar.</p><button class="btn-pri" style="width:100%;margin-top:12px;padding:11px;border-radius:13px;border:none;font-weight:700;font-family:inherit;cursor:pointer;" onclick="aiStartPoint()">📍 Maňa ýol görkez</button></div>
+  ${sessUI}
+  <div class="sect-label">Täsirli usullar</div>
+  ${techs}`;
+}
+async function aiStartPoint(){
+  const el=document.getElementById('startOut');if(el)el.textContent='AI pikirlenýär…';
+  const data=`Maksatlar: ${db.goals.map(g=>g.text+' ('+g.p+'%)').join(', ')||'ýok'}. Açyk işler: ${db.tasks.filter(t=>!t.done).map(t=>t.text).join(', ')||'ýok'}. Endikler: ${db.habits.map(h=>h.text).join(', ')||'ýok'}.`;
+  try{const txt=await aiCall("Sen öwreniş we produktiwlik boýunça AI mentor. Diňe TÜRKMEN dilinde jogap ber. Ulanyja NIREDEN başlamalydygyny, haýsy işi/mowzugy 1-nji, 2-nji, 3-nji etmelidigini we her birine takmynan näçe wagt bermelidigini gysga, NOMERLENEN görnüşde aýt. Soňunda bir täsirli öwreniş usulyny maslahat ber.",data+"\n\nMaňa nireden başlamaly we yzygiderlik bilen näçe wagt sarp etmeli — gysga ýol görkez.",800);if(el)el.innerHTML=esc(txt||'Jogap ýok').replace(/\n/g,'<br>');}
+  catch(e){if(el)el.textContent='AI jogap berip bilmedi. Internet barlygyny barla — AI diňe Claude.ai içinde işleýär.';}
+}
+
+/* ---- ŞAHSYÝET / IDENTITY ---- */
+function rIdentity(){
+  const id=db.identity;
+  const chips=(arr,kind,col)=>`<div style="display:flex;flex-wrap:wrap;margin-top:4px;">${(arr||[]).map((x,i)=>`<span class="hard-chip"><span style="width:9px;height:9px;border-radius:50%;background:${col};display:inline-block"></span>${esc(x)} <span style="color:var(--muted);cursor:pointer;margin-left:3px" onclick="idRm('${kind}',${i})">×</span></span>`).join('')||'<span style="color:var(--muted);font-size:13px">—</span>'}</div>`;
+  return head('Şahsyýet')+`
+  <div class="card"><div style="font-weight:800;color:var(--ink);margin-bottom:8px;">🌟 Durmuş wezipäm (Vision)</div><textarea id="idvision" placeholder="Men durmuşda nämä ymtylýaryn?..." style="width:100%;min-height:70px;border:1.5px solid var(--line);background:var(--card);border-radius:13px;padding:11px 13px;font-family:inherit;font-size:14px;color:var(--ink);resize:vertical;outline:none;">${esc(id.vision||'')}</textarea>
+  <div style="font-weight:800;color:var(--ink);margin:12px 0 8px;">🎯 Missiýam</div><textarea id="idmission" placeholder="Maksadym we ýörelgäm..." style="width:100%;min-height:60px;border:1.5px solid var(--line);background:var(--card);border-radius:13px;padding:11px 13px;font-family:inherit;font-size:14px;color:var(--ink);resize:vertical;outline:none;">${esc(id.mission||'')}</textarea>
+  <button class="btn-pri" style="width:100%;margin-top:10px;padding:11px;border-radius:13px;border:none;font-weight:700;font-family:inherit;cursor:pointer;" onclick="idSaveText()">Ýatda sakla</button></div>
+  <div class="card"><div style="font-weight:800;color:var(--ink);margin-bottom:6px;">💎 Esasy gymmatlyklarym</div>${chips(id.values,'values','#a87e9a')}<div class="addbar" style="margin-top:10px"><input id="idv" placeholder="Gymmatlyk goş (mysal: dogruçyllyk)" onkeydown="if(event.key==='Enter')idAdd('values')"><button onclick="idAdd('values')">+</button></div></div>
+  <div class="card"><div style="font-weight:800;color:var(--ink);margin-bottom:6px;">💪 Güýçli taraplarym</div>${chips(id.strengths,'strengths','#6f9479')}<div class="addbar" style="margin-top:10px"><input id="ids" placeholder="Güýçli tarap goş" onkeydown="if(event.key==='Enter')idAdd('strengths')"><button onclick="idAdd('strengths')">+</button></div></div>
+  <div class="card"><div style="font-weight:800;color:var(--ink);margin-bottom:6px;">🧗 Gowşak taraplarym</div>${chips(id.weaknesses,'weaknesses','#b06a6a')}<div class="addbar" style="margin-top:10px"><input id="idw" placeholder="Üstünde işlemeli tarap goş" onkeydown="if(event.key==='Enter')idAdd('weaknesses')"><button onclick="idAdd('weaknesses')">+</button></div></div>
+  <div class="card ai-card"><div class="hd">🤖 AI: missiýamy düz <span class="tag">AI</span></div><p id="idAiOut">Gymmatlyklaryňa we güýçli taraplaryňa görä AI saňa durmuş missiýasyny düzüp berer.</p><button class="btn-pri" style="width:100%;margin-top:12px;padding:11px;border-radius:13px;border:none;font-weight:700;font-family:inherit;cursor:pointer;" onclick="aiMission()">✨ Düzüp ber</button></div>`;
+}
+function idSaveText(){db.identity.vision=document.getElementById('idvision').value;db.identity.mission=document.getElementById('idmission').value;addXP(3);save();showToast('🧭','Ýatda saklandy','Şahsyýet maglumatlaryň täzelendi');}
+function idAdd(kind){const map={values:'idv',strengths:'ids',weaknesses:'idw'};const e=document.getElementById(map[kind]);const v=e.value.trim();if(!v)return;if(!db.identity[kind])db.identity[kind]=[];db.identity[kind].push(v);addXP(1);save();render();}
+function idRm(kind,i){db.identity[kind].splice(i,1);save();render();}
+async function aiMission(){
+  const el=document.getElementById('idAiOut');if(el)el.textContent='AI düzýär…';
+  const id=db.identity;const data=`Gymmatlyklar: ${(id.values||[]).join(', ')||'ýok'}. Güýçli taraplar: ${(id.strengths||[]).join(', ')||'ýok'}. Gowşak taraplar: ${(id.weaknesses||[]).join(', ')||'ýok'}. Vision: ${id.vision||'ýok'}.`;
+  try{const txt=await aiCall("Sen şahsy ösüş boýunça mentor. Diňe TÜRKMEN dilinde, ylhamlandyryjy we gysga 2-3 sözlemlik durmuş missiýasyny ýaz. Ulanyjynyň gymmatlyklaryna we güýçli taraplaryna esaslan.",data,400);if(el)el.innerHTML=esc(txt||'Jogap ýok').replace(/\n/g,'<br>');}
+  catch(e){if(el)el.textContent='AI jogap berip bilmedi. Internet barlygyny barla — AI diňe Claude.ai içinde işleýär.';}
+}
+
+/* ---- SANDYK / DIGITAL VAULT ---- */
+function askModal(opts){
+  return new Promise(res=>{
+    const ov=document.getElementById('modal');const f=opts.fields||[];
+    ov.querySelector('.m-box').innerHTML=`<h3>${esc(opts.title||'')}</h3>`+f.map(x=>`<input class="m-in" data-k="${x.key}" type="${x.type||'text'}" inputmode="${x.inputmode||'text'}" placeholder="${esc(x.placeholder||x.label||'')}" value="${esc(x.value||'')}">`).join('')+`<div class="m-btns"><button class="m-cancel">Goý bol</button><button class="m-ok">${esc(opts.okText||'Bolýar')}</button></div>`;
+    ov.classList.add('on');const ins=ov.querySelectorAll('.m-in');if(ins[0])setTimeout(()=>ins[0].focus(),60);
+    function done(val){ov.classList.remove('on');res(val);}
+    ov.querySelector('.m-ok').onclick=()=>{const o={};ins.forEach(i=>o[i.dataset.k]=i.value);done(o);};
+    ov.querySelector('.m-cancel').onclick=()=>done(null);
+    ins.forEach(i=>i.onkeydown=e=>{if(e.key==='Enter')ov.querySelector('.m-ok').click();});
+  });
+}
+function confirmModal(msg){return new Promise(res=>{const ov=document.getElementById('modal');ov.querySelector('.m-box').innerHTML=`<h3>${esc(msg)}</h3><div class="m-btns"><button class="m-cancel">Ýok</button><button class="m-ok">Hawa</button></div>`;ov.classList.add('on');ov.querySelector('.m-ok').onclick=()=>{ov.classList.remove('on');res(true);};ov.querySelector('.m-cancel').onclick=()=>{ov.classList.remove('on');res(false);};});}
+
+function rVault(){
+  const hasPin=!!db.profile.vaultPin;
+  if(!hasPin){
+    return head('Sandyk')+`<div class="card" style="text-align:center;"><div style="font-size:46px;margin-bottom:8px;">🔐</div><div style="font-weight:800;color:var(--ink);margin-bottom:6px;">Sandygy goramak üçin PIN belle</div><div style="font-size:13px;color:var(--muted);margin-bottom:14px;">Sandyk diňe şu PIN bilen açylar. Gizlin zatlaryňy goramak üçin.</div><input id="newpin" type="password" inputmode="numeric" placeholder="Täze PIN" style="width:100%;text-align:center;letter-spacing:6px;border:1.5px solid var(--line);background:var(--card);border-radius:13px;padding:13px;font-family:inherit;font-size:18px;color:var(--ink);outline:none;" onkeydown="if(event.key==='Enter')vaultSetPin()"><button class="btn-pri" style="width:100%;margin-top:10px;padding:12px;border-radius:13px;border:none;font-weight:700;font-family:inherit;cursor:pointer;" onclick="vaultSetPin()">PIN belle we aç</button></div>`;
+  }
+  if(!vaultOpen){
+    return head('Sandyk')+`<div class="card" style="text-align:center;"><div style="font-size:46px;margin-bottom:8px;">🔒</div><div style="font-weight:800;color:var(--ink);margin-bottom:12px;">Sandyk gulply</div><input id="pinin" type="password" inputmode="numeric" placeholder="PIN gir" style="width:100%;text-align:center;letter-spacing:6px;border:1.5px solid var(--line);background:var(--card);border-radius:13px;padding:13px;font-family:inherit;font-size:18px;color:var(--ink);outline:none;" onkeydown="if(event.key==='Enter')vaultUnlock()"><button class="btn-pri" style="width:100%;margin-top:10px;padding:12px;border-radius:13px;border:none;font-weight:700;font-family:inherit;cursor:pointer;" onclick="vaultUnlock()">🔓 Aç</button></div>`;
+  }
+  const items=(db.vault||[]).length?db.vault.map(v=>{
+    if(v.kind==='file')return `<div class="card"><div class="row"><div class="fic" style="font-size:22px">${fileEmoji(v.ftype,v.label)}</div><div style="flex:1;min-width:0"><div class="txt" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(v.label)}</div><small style="color:var(--muted)">Gizlin faýl${v.fsize?' · '+fmtSize(v.fsize):''}</small></div><button class="rfs" style="width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;" onclick="openStored('${v.fkey}','${esc(v.label)}')">⬇</button><span class="del" onclick="vaultRm('${v.id}')">×</span></div></div>`;
+    return `<div class="card"><div class="row"><div style="flex:1;min-width:0"><div class="txt">${esc(v.label)}</div><div style="font-size:13px;color:var(--muted);font-family:monospace;margin-top:3px;word-break:break-all" id="sec_${v.id}">••••••••</div></div><button class="rfs" style="width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;" onclick="vaultReveal('${v.id}')">👁</button><span class="del" onclick="vaultRm('${v.id}')">×</span></div></div>`;
+  }).join(''):`<div class="empty">Gizlin tekst ýa-da faýl goş 🔐</div>`;
+  return head('Sandyk',(db.vault||[]).length||null)+`<div class="card ai-card"><div class="hd">🔓 Sandyk açyk</div><p>Parol, ID, gizlin tekst we faýllaryňy goý. Diňe şu enjamda saklanýar.</p></div>
+  <div style="display:flex;gap:9px;margin:0 2px 14px;"><button class="btn-pri" style="flex:1;padding:12px;border-radius:13px;border:none;font-weight:700;font-family:inherit;cursor:pointer;" onclick="vaultAdd()">+ Tekst gizle</button><button class="btn-sec" style="flex:1;padding:12px;border-radius:13px;font-weight:700;font-family:inherit;cursor:pointer;" onclick="pickUp('vault')">📎 Faýl gizle</button></div>
+  <div style="margin:0 2px 14px;"><button class="btn-sec" style="width:100%;padding:11px;border-radius:13px;font-weight:700;font-family:inherit;cursor:pointer;" onclick="vaultChangePin()">🔑 PIN üýtget · 🔒 Gulpla</button></div>`+items;
+}
+function vaultSetPin(){const v=(document.getElementById('newpin').value||'').trim();if(!v){showToast('⚠️','PIN','PIN boş bolmaly däl');return;}db.profile.vaultPin=v;vaultOpen=true;save();showToast('🔐','Bellendi','PIN goýuldy, sandyk açyk');render();}
+function vaultUnlock(){const v=document.getElementById('pinin').value;if(v===db.profile.vaultPin){vaultOpen=true;render();}else showToast('⚠️','Nädogry','PIN dogry däl');}
+async function vaultChangePin(){const r=await askModal({title:'PIN üýtget (boş = gulpla & aýyr)',fields:[{key:'pin',label:'Täze PIN',type:'password',inputmode:'numeric',value:db.profile.vaultPin}],okText:'Sakla'});if(r===null){vaultOpen=false;render();return;}db.profile.vaultPin=(r.pin||'').trim();if(!db.profile.vaultPin)vaultOpen=true;save();showToast('🔑','Saklandy','PIN täzelendi');render();}
+async function vaultAdd(){const r=await askModal({title:'Gizlin tekst goş',fields:[{key:'label',label:'Ady (mysal: Gmail paroly)'},{key:'secret',label:'Gizlin maglumat / parol'}],okText:'Gizle'});if(!r||!(r.label||'').trim()){if(r)showToast('⚠️','Ady ýok','At ýaz');return;}db.vault.push({id:uid(),label:r.label.trim(),secret:r.secret||'',kind:'text'});addXP(1);save();render();showToast('🔐','Gizlendi',r.label.trim());}
+function vaultReveal(id){const v=db.vault.find(x=>x.id===id);const el=document.getElementById('sec_'+id);if(!el)return;if(el.dataset.show){el.textContent='••••••••';el.dataset.show='';}else{el.textContent=v.secret||'(boş)';el.dataset.show='1';}}
+async function vaultRm(id){if(!(await confirmModal('Bu gizlin zat pozulsynmy?')))return;const v=db.vault.find(x=>x.id===id);if(v&&v.fkey)idbDel(v.fkey);db.vault=db.vault.filter(x=>x.id!==id);save();render();}
+
+/* ---- ARAGATNAŞYK / SOCIAL ---- */
+const MONTHS=['Ýan','Few','Mart','Apr','Maý','Iýun','Iýul','Awg','Sen','Okt','Noý','Dek'];
+function rSocial(){
+  const list=(db.contacts||[]).length?db.contacts.slice().map(c=>{let bd='';if(c.bday){const p=c.bday.split('-');bd=parseInt(p[1])+' '+(MONTHS[parseInt(p[0])-1]||'');}return `<div class="card"><div class="row"><div class="book-cover" style="width:44px;height:44px;border-radius:50%;font-size:18px;background:linear-gradient(135deg,#b06a6a,#8a4f5a)">${esc((c.name||'?')[0].toUpperCase())}</div><div style="flex:1;min-width:0"><div class="txt">${esc(c.name)}</div><div style="font-size:12px;color:var(--muted)">${esc(c.relation||'')}${bd?' · 🎂 '+bd:''}${c.phone?' · '+esc(c.phone):''}</div></div><span class="del" onclick="cRm('${c.id}')">×</span></div></div>`;}).join(''):`<div class="empty">Ýakynlaryňy goş — doglan günlerini ýatladaryn 🎂</div>`;
+  return head('Aragatnaşyk',(db.contacts||[]).length||null)+`<div style="margin:0 2px 14px;"><button class="btn-pri" style="width:100%;padding:12px;border-radius:13px;border:none;font-weight:700;font-family:inherit;cursor:pointer;" onclick="cAdd()">+ Adam goş</button></div>`+list;
+}
+async function cAdd(){const r=await askModal({title:'Adam goş',fields:[{key:'name',label:'Ady'},{key:'relation',label:'Gatnaşyk (dost, ene...)'},{key:'bday',label:'Doglan güni AÝ-GÜN (03-15)'},{key:'phone',label:'Telefon (islege görä)'}],okText:'Goş'});if(!r||!(r.name||'').trim())return;let bd='';const b=(r.bday||'').trim();if(b){if(/^\d{1,2}-\d{1,2}$/.test(b)){const p=b.split('-');bd=String(p[0]).padStart(2,'0')+'-'+String(p[1]).padStart(2,'0');}else showToast('⚠️','Format','AÝ-GÜN, mysal 03-15');}db.contacts.push({id:uid(),name:r.name.trim(),relation:(r.relation||'').trim(),bday:bd,phone:(r.phone||'').trim()});addXP(1);save();render();}
+function cRm(id){db.contacts=db.contacts.filter(x=>x.id!==id);save();render();}
+
+/* ---- SIMULÝATOR ---- */
+function rSimulator(){
+  return head('Durmuş simulýatory')+`
+  <div class="card"><div style="font-weight:800;color:var(--ink);margin-bottom:4px;">🎓 Öwreniş simulýasiýasy</div><div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Her gün näçe sagat × näçe gün öwrensem, nirede bolaryn?</div>
+    <div style="display:flex;gap:8px;"><input id="simH" type="number" placeholder="Sagat/gün" value="2" style="flex:1;border:1.5px solid var(--line);background:var(--card);border-radius:12px;padding:11px;font-family:inherit;font-size:14px;color:var(--ink);outline:none;"><input id="simD" type="number" placeholder="Gün" value="365" style="flex:1;border:1.5px solid var(--line);background:var(--card);border-radius:12px;padding:11px;font-family:inherit;font-size:14px;color:var(--ink);outline:none;"></div>
+    <input id="simTopic" placeholder="Mowzuk (mysal: Flutter)" style="width:100%;margin-top:8px;border:1.5px solid var(--line);background:var(--card);border-radius:12px;padding:11px;font-family:inherit;font-size:14px;color:var(--ink);outline:none;">
+    <button class="btn-pri" style="width:100%;margin-top:10px;padding:11px;border-radius:13px;border:none;font-weight:700;font-family:inherit;cursor:pointer;" onclick="simLearn()">Hasapla</button>
+    <div id="simLearnOut" style="margin-top:12px;"></div></div>
+  <div class="card"><div style="font-weight:800;color:var(--ink);margin-bottom:4px;">💰 Maliýe simulýasiýasy</div><div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Her aý näçe tygşytlasam, ýyllardan soň näçe bolar?</div>
+    <div style="display:flex;gap:8px;"><input id="finM" type="number" placeholder="Aýda (manat)" value="200" style="flex:1;border:1.5px solid var(--line);background:var(--card);border-radius:12px;padding:11px;font-family:inherit;font-size:14px;color:var(--ink);outline:none;"><input id="finY" type="number" placeholder="Ýyl" value="5" style="flex:1;border:1.5px solid var(--line);background:var(--card);border-radius:12px;padding:11px;font-family:inherit;font-size:14px;color:var(--ink);outline:none;"></div>
+    <input id="finR" type="number" placeholder="Ýyllyk göterim % (islege görä, mysal 10)" value="0" style="width:100%;margin-top:8px;border:1.5px solid var(--line);background:var(--card);border-radius:12px;padding:11px;font-family:inherit;font-size:14px;color:var(--ink);outline:none;">
+    <button class="btn-pri" style="width:100%;margin-top:10px;padding:11px;border-radius:13px;border:none;font-weight:700;font-family:inherit;cursor:pointer;" onclick="simFin()">Hasapla</button>
+    <div id="simFinOut" style="margin-top:12px;"></div></div>
+  <div class="card"><div style="font-weight:800;color:var(--ink);margin-bottom:4px;">🔥 Endik täsiri</div><div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Her gün kiçi hereket → bir ýyldaky jemi.</div>
+    <div style="display:flex;gap:8px;"><input id="hbN" type="number" placeholder="Sany/gün" value="20" style="flex:1;border:1.5px solid var(--line);background:var(--card);border-radius:12px;padding:11px;font-family:inherit;font-size:14px;color:var(--ink);outline:none;"><input id="hbU" placeholder="Näme (mysal: otžimaniýe)" style="flex:2;border:1.5px solid var(--line);background:var(--card);border-radius:12px;padding:11px;font-family:inherit;font-size:14px;color:var(--ink);outline:none;"></div>
+    <button class="btn-pri" style="width:100%;margin-top:10px;padding:11px;border-radius:13px;border:none;font-weight:700;font-family:inherit;cursor:pointer;" onclick="simHabit()">Hasapla</button>
+    <div id="simHabitOut" style="margin-top:12px;"></div></div>`;
+}
+function simBox(t){return `<div style="background:var(--card2);border:1px solid var(--line);border-radius:13px;padding:13px;font-size:14px;color:var(--ink);line-height:1.6;">${t}</div>`;}
+function simLearn(){
+  const h=parseFloat(document.getElementById('simH').value)||0,d=parseInt(document.getElementById('simD').value)||0;
+  const topic=document.getElementById('simTopic').value.trim()||'bu ugur';const total=Math.round(h*d);
+  let lvl='başlangyç';if(total>=2000)lvl='ussat (professional)';else if(total>=1000)lvl='ökde';else if(total>=300)lvl='orta';else if(total>=100)lvl='täze başlanýan+';
+  const el=document.getElementById('simLearnOut');
+  el.innerHTML=simBox(`<b>${total} sagat</b> öwrenersiň (${h} sag × ${d} gün).<br>Takmynan dereje: <b style="color:var(--accent)">${lvl}</b>.<br>~10 000 sagat = dünýä derejesi; sen ${(total/10000*100).toFixed(1)}%-ine ýeterdiň.`)+`<button class="btn-sec" style="width:100%;margin-top:10px;padding:10px;border-radius:12px;font-weight:700;font-family:inherit;cursor:pointer;" onclick="simAI('learn','${esc(topic)}',${total})">🤖 AI ssenariý</button><div id="simAIout" style="margin-top:10px"></div>`;
+}
+function simFin(){
+  const m=parseFloat(document.getElementById('finM').value)||0,y=parseFloat(document.getElementById('finY').value)||0,r=parseFloat(document.getElementById('finR').value)||0;
+  const n=Math.round(y*12);const contrib=m*n;let fv=contrib;
+  if(r>0){const mr=r/12/100;fv=m*((Math.pow(1+mr,n)-1)/mr);}
+  const el=document.getElementById('simFinOut');
+  el.innerHTML=simBox(`${y} ýylda jemi goýan puluň: <b>${Math.round(contrib).toLocaleString()} m.</b><br>Netije: <b style="color:var(--accent)">${Math.round(fv).toLocaleString()} m.</b>${r>0?`<br>Ösüş (göterim): +${Math.round(fv-contrib).toLocaleString()} m.`:''}`)+`<button class="btn-sec" style="width:100%;margin-top:10px;padding:10px;border-radius:12px;font-weight:700;font-family:inherit;cursor:pointer;" onclick="simAI('fin','',${Math.round(fv)})">🤖 AI ssenariý</button><div id="simAIout2" style="margin-top:10px"></div>`;
+}
+function simHabit(){
+  const n=parseInt(document.getElementById('hbN').value)||0;const u=document.getElementById('hbU').value.trim()||'gezek';
+  const el=document.getElementById('simHabitOut');
+  el.innerHTML=simBox(`Bir ýylda jemi: <b style="color:var(--accent)">${(n*365).toLocaleString()} ${esc(u)}</b>!<br>Aýda ~${n*30}, hepdede ${n*7}. Kiçi hereket — uly netije 💪`);
+}
+async function simAI(kind,topic,num){
+  const id=kind==='learn'?'simAIout':'simAIout2';const el=document.getElementById(id);if(el)el.textContent='AI pikirlenýär…';
+  const q=kind==='learn'?`Eger men ${topic} ugruny jemi ${num} sagat öwrensem, takmynan nirede bolaryn we näme edip bilerin? Anyk we ruhlandyryjy bol.`:`Eger men jemläp ${num} manat tygşytlasam/ýygnasam, bu bilen näme edip bilerin we maliýe taýdan nähili maslahat berersiň?`;
+  try{const txt=await aiCall("Sen geljek-ssenariý boýunça AI maslahatçy. Diňe TÜRKMEN dilinde, gysga we anyk jogap ber.",q,500);if(el)el.innerHTML=esc(txt||'Jogap ýok').replace(/\n/g,'<br>');}catch(e){if(el)el.textContent='AI jogap berip bilmedi. Internet barlygyny barla — AI diňe Claude.ai içinde işleýär.';}
+}
+
+/* ---- AI AGENTLER ---- */
+const AGENTS=[
+ ['study','🎓','Okuw agenti','Sen okuw boýunça AI tälimçi. Diňe TÜRKMEN dilinde, täsirli öwreniş usullary, meýilnama we ruhlandyryş ber.'],
+ ['finance','💰','Maliýe agenti','Sen şahsy maliýe boýunça AI tälimçi. Diňe TÜRKMEN dilinde, býujet, tygşytlamak we maýa goýum boýunça sada maslahat ber. Maliýe geňeşçisi däldigiňi belle.'],
+ ['health','❤️','Saglyk agenti','Sen saglyk we sport boýunça AI tälimçi. Diňe TÜRKMEN dilinde, sagdyn endikler, uky, suw, hereket boýunça maslahat ber. Lukmançylyk diagnozyny goýma.'],
+ ['career','💼','Kariýera agenti','Sen kariýera boýunça AI tälimçi. Diňe TÜRKMEN dilinde, başarnyklar, CV, portfolio, iş tapmak boýunça maslahat ber.'],
+ ['prod','⚡','Produktiwlik agenti','Sen produktiwlik boýunça AI tälimçi. Diňe TÜRKMEN dilinde, wagt dolandyryşy, ileri tutma we fokus boýunça maslahat ber.']
+];
+function rAgents(){
+  return head('AI Agentler')+`<div class="card ai-card"><div class="hd">🤖 Her ugur — öz agenti</div><p>Her agent öz ugruny dolandyrýar we seniň maglumatlaryňa görä şahsy maslahat berýär.</p></div>`+AGENTS.map(a=>`<div class="card" onclick="openAgent('${a[0]}')" style="cursor:pointer"><div class="row"><div class="tic" style="background:linear-gradient(135deg,#506b8a,#3c585b);width:46px;height:46px;border-radius:13px;display:grid;place-items:center;font-size:22px;">${a[1]}</div><div style="flex:1"><div class="txt">${a[2]}</div></div><span style="color:var(--muted);font-size:20px">›</span></div></div>`).join('');
+}
+function openAgent(k){curAgent=k;nav('agent');}
+function rAgent(){
+  const a=AGENTS.find(x=>x[0]===curAgent);if(!a)return rAgents();
+  const msgs=(agentChats[curAgent]||[]).map(m=>`<div class="msg ${m.role}">${esc(m.text).replace(/\n/g,'<br>')}</div>`).join('');
+  const intro=(agentChats[curAgent]||[]).length?'':`<div class="msg ai">Salam! Men ${a[2]} 🤖 ${a[1]} Maňa islendik soragyňy ber.</div>`;
+  document.getElementById('topTitle').textContent=a[2];
+  return `<div class="scr-title"><div class="bk" onclick="back()">←</div><h2>${a[1]} ${a[2]}</h2></div><div class="chat" id="chat">${intro}${msgs}</div><div class="chat-input"><input id="agent-in" placeholder="Soragyňy ýaz..." onkeydown="if(event.key==='Enter')sendAgent()" style="flex:1;border:1.5px solid var(--line);background:var(--card);border-radius:15px;padding:13px 15px;font-family:inherit;font-size:15px;color:var(--ink);outline:none;"><button style="border:none;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border-radius:15px;width:48px;font-size:20px;cursor:pointer;" onclick="sendAgent()">➤</button></div>`;
+}
+async function sendAgent(){
+  const inp=document.getElementById('agent-in');const q=inp.value.trim();if(!q)return;
+  const a=AGENTS.find(x=>x[0]===curAgent);if(!agentChats[curAgent])agentChats[curAgent]=[];
+  agentChats[curAgent].push({role:'me',text:q});agentChats[curAgent].push({role:'ai',text:'Pikirlenýär…',load:true});render();
+  const ctx=`Ulanyjy maglumaty — Maksatlar: ${db.goals.map(g=>g.text).join(', ')||'ýok'}. Işler: ${db.tasks.filter(t=>!t.done).map(t=>t.text).join(', ')||'ýok'}. Endikler: ${db.habits.map(h=>h.text).join(', ')||'ýok'}.`;
+  const hist=agentChats[curAgent].filter(m=>!m.load).slice(-6).map(m=>(m.role==='me'?'Ulanyjy: ':'Agent: ')+m.text).join('\n');
+  try{const txt=await aiCall(a[3],ctx+'\n\nSöhbet:\n'+hist+'\n\nAgent jogaby:',700);agentChats[curAgent]=agentChats[curAgent].filter(m=>!m.load);agentChats[curAgent].push({role:'ai',text:txt||'Jogap ýok'});}
+  catch(e){agentChats[curAgent]=agentChats[curAgent].filter(m=>!m.load);agentChats[curAgent].push({role:'ai',text:'AI jogap berip bilmedi. Internet barlygyny barla — AI diňe Claude.ai içinde işleýär.'});}
+  db.agentChats=agentChats;save();
+  render();
+}
+
+/* ---- KARAR MERKEZI ---- */
+function rDecision(){
+  const chips=(arr,kind,col)=>`<div style="display:flex;flex-wrap:wrap;margin-top:6px;">${arr.map((x,i)=>`<span class="hard-chip"><span style="width:8px;height:8px;border-radius:50%;background:${col};display:inline-block"></span>${esc(x)} <span style="color:var(--muted);cursor:pointer;margin-left:2px" onclick="decRm('${kind}',${i})">×</span></span>`).join('')||'<span style="color:var(--muted);font-size:13px">—</span>'}</div>`;
+  const hist=(db.decisions||[]).length?`<div class="sect-label">Geçmiş kararlar</div>`+db.decisions.slice().reverse().map(d=>`<div class="card"><div class="ntitle">${esc(d.title)}</div><div class="nbody">${esc(d.verdict||'')}</div></div>`).join(''):'';
+  return head('Karar merkezi')+`
+  <div class="card"><input id="decT" placeholder="Karar (mysal: Täze iş kabul edeýinmi?)" value="${esc(curDec.title)}" oninput="curDec.title=this.value" style="width:100%;border:1.5px solid var(--line);background:var(--card);border-radius:13px;padding:12px;font-family:inherit;font-size:14px;color:var(--ink);outline:none;"></div>
+  <div class="card"><div style="font-weight:800;color:var(--green);margin-bottom:2px;">✅ Artykmaçlyklar</div>${chips(curDec.pros,'pros','#6f9479')}<div class="addbar" style="margin-top:8px"><input id="decP" placeholder="Artykmaçlyk goş" onkeydown="if(event.key==='Enter')decAdd('pros')"><button onclick="decAdd('pros')">+</button></div></div>
+  <div class="card"><div style="font-weight:800;color:var(--accent);margin-bottom:2px;">⛔ Kemçilikler</div>${chips(curDec.cons,'cons','#b06a6a')}<div class="addbar" style="margin-top:8px"><input id="decC" placeholder="Kemçilik goş" onkeydown="if(event.key==='Enter')decAdd('cons')"><button onclick="decAdd('cons')">+</button></div></div>
+  <div class="card ai-card"><div class="hd">🤖 AI karar maslahaty <span class="tag">AI</span></div><p id="decOut">Artykmaçlyk we kemçilikleri ýazyp, AI-dan analiz we maslahat al.</p><button class="btn-pri" style="width:100%;margin-top:12px;padding:11px;border-radius:13px;border:none;font-weight:700;font-family:inherit;cursor:pointer;" onclick="decAI()">⚖️ Analiz et</button></div>`+hist;
+}
+function decAdd(kind){const e=document.getElementById(kind==='pros'?'decP':'decC');const v=e.value.trim();if(!v)return;curDec[kind].push(v);render();}
+function decRm(kind,i){curDec[kind].splice(i,1);render();}
+async function decAI(){
+  const el=document.getElementById('decOut');if(!curDec.title){showToast('✍️','Karar','Ilki karary ýaz');return;}if(el)el.textContent='AI analiz edýär…';
+  const data=`Karar: ${curDec.title}. Artykmaçlyklar: ${curDec.pros.join(', ')||'ýok'}. Kemçilikler: ${curDec.cons.join(', ')||'ýok'}.`;
+  try{const txt=await aiCall("Sen karar kabul etmek boýunça AI maslahatçy. Diňe TÜRKMEN dilinde, artykmaçlyk we kemçilikleri ölçäp, töwekgelçiligi we mümkinçiligi gysgaça analiz et we anyk maslahat ber. Soňky karar ulanyjynyňkydygyny belle.",data,600);if(el)el.innerHTML=esc(txt||'Jogap ýok').replace(/\n/g,'<br>');db.decisions.push({title:curDec.title,verdict:(txt||'').slice(0,400),date:Date.now()});curDec={title:'',pros:[],cons:[]};addXP(5);save();}
+  catch(e){if(el)el.textContent='AI jogap berip bilmedi. Internet barlygyny barla — AI diňe Claude.ai içinde işleýär.';}
+}
+
+/* ---- LIFE DNA ---- */
+function rDna(){
+  const has=!!db.dna;
+  return head('Durmuş DNA-sy')+`<div class="card ai-card"><div class="hd">🧬 Şahsy DNA profiliň</div><p>AI seniň maglumatlaryňa, gymmatlyklaryňa we endikleriňe seredip, häsiýetiňi, öwreniş we iş stiliňi kesgitleýär. Näçe köp maglumat — şonça takyk.</p><button class="btn-pri" style="width:100%;margin-top:12px;padding:11px;border-radius:13px;border:none;font-weight:700;font-family:inherit;cursor:pointer;" onclick="dnaGen()">${has?'🔄 Täzeden düz':'🧬 Profilimi döret'}</button></div>${has?`<div class="card"><div id="dnaOut" style="font-size:14px;color:var(--ink);line-height:1.6;">${esc(db.dna).replace(/\n/g,'<br>')}</div></div>`:`<div id="dnaOut"></div>`}`;
+}
+async function dnaGen(){
+  const el=document.getElementById('dnaOut');if(el)el.innerHTML='<div class="card">AI seni öwrenýär…</div>';
+  const id=db.identity;const data=`Gymmatlyklar: ${(id.values||[]).join(', ')||'ýok'}. Güýçli: ${(id.strengths||[]).join(', ')||'ýok'}. Gowşak: ${(id.weaknesses||[]).join(', ')||'ýok'}. Maksatlar: ${db.goals.map(g=>g.text).join(', ')||'ýok'}. Endikler: ${db.habits.map(h=>h.text).join(', ')||'ýok'}. Vision: ${id.vision||'ýok'}.`;
+  try{const txt=await aiCall("Sen şahsyýet analizi boýunça AI. Diňe TÜRKMEN dilinde, ulanyjynyň şahsy profilini düz: häsiýet görnüşi, öwreniş stili, iş (produktiwlik) stili, güýçli taraplary we ösdürmeli taraplary. Gysga sözbaşylar bilen düzüp ber, ruhlandyryjy bol.",data,900);db.dna=txt||'';save();render();}
+  catch(e){if(el)el.innerHTML='<div class="card">AI jogap berip bilmedi. Internet barlygyny barla — AI diňe Claude.ai içinde işleýär.</div>';}
+}
+
+/* ---- ŞAHSY KONTEKST (AI diňe seniň durmuşyňa gönükdirilen) ---- */
+function userContext(){
+  const id=db.identity;const inc=db.finance.filter(f=>f.type==='in').reduce((a,b)=>a+b.amount,0);const out=db.finance.filter(f=>f.type==='out').reduce((a,b)=>a+b.amount,0);
+  return `MENIŇ DURMUŞ MAGLUMATLARYM —
+Adym: ${db.profile.name||'näbelli'}. Dereje ${level()}, XP ${db.profile.xp}.
+Durmuş wezipäm: ${id.vision||'ýok'}. Missiýam: ${id.mission||'ýok'}.
+Gymmatlyklarym: ${(id.values||[]).join(', ')||'ýok'}. Güýçli: ${(id.strengths||[]).join(', ')||'ýok'}. Gowşak: ${(id.weaknesses||[]).join(', ')||'ýok'}.
+Maksatlarym: ${db.goals.map(g=>g.text+' ('+g.p+'%)').join('; ')||'ýok'}.
+Açyk işlerim: ${db.tasks.filter(t=>!t.done).map(t=>t.text).join('; ')||'ýok'}.
+Endiklerim: ${db.habits.map(h=>h.text).join(', ')||'ýok'}. Gündelik tertibim: ${(db.routine||[]).map(r=>r.text).join(', ')||'ýok'}.
+Maliýe: girdeji ${inc}, çykdajy ${out} manat. Fokus sessiýalary: ${db.focusDone}.
+Kämillik ugurlarym: ${lifeAreas().map(a=>a.n+' '+a.v+'%').join(', ')}. Umumy kämillik: ${growthOverall()}%.`;
+}
+const MENTOR="Sen meniň şahsy 'Durmuş OS' AI kömekçim — diňe MENIŇ maglumatlaryma, maksatlaryma we durmuşyma gönükdirilen jogap ber. Hökman TÜRKMEN dilinde, anyk, amaly we ruhlandyryjy bol.";
+
+/* ---- DURMUŞ GPS ---- */
+function rGps(){
+  const gp=growthOverall();const low=lifeAreas().slice().sort((a,b)=>a.v-b.v)[0];
+  return head('Durmuş GPS')+`
+  <div class="card"><div style="display:flex;gap:14px;align-items:center;"><div style="width:54px;height:54px;border-radius:16px;background:linear-gradient(135deg,#34d399,#0ea5e9);display:grid;place-items:center;font-size:26px;flex-shrink:0;">📍</div><div><div style="font-weight:800;color:var(--ink);">Häzirki ýagdaýyň</div><div style="font-size:13px;color:var(--muted);margin-top:3px;">Kämillik ${gp}% · iň gowşak ugur: ${low?low.n+' '+low.v+'%':'—'}</div></div></div></div>
+  <div class="card"><div style="font-weight:800;color:var(--ink);margin-bottom:8px;">🎯 Nirä barýarsyň? (maksat)</div><textarea id="gpsT" placeholder="Mysal: Professional Flutter programmist bolmak" style="width:100%;min-height:64px;border:1.5px solid var(--line);background:var(--card);border-radius:13px;padding:11px 13px;font-family:inherit;font-size:14px;color:var(--ink);resize:vertical;outline:none;">${esc(db.gps.target||'')}</textarea><button class="btn-pri" style="width:100%;margin-top:10px;padding:11px;border-radius:13px;border:none;font-weight:700;font-family:inherit;cursor:pointer;" onclick="gpsRoute()">🧭 Marşrut ber</button><div id="gpsOut" style="margin-top:12px;"></div></div>`;
+}
+async function gpsRoute(){
+  db.gps.target=document.getElementById('gpsT').value.trim();save();
+  const el=document.getElementById('gpsOut');if(!db.gps.target){showToast('🎯','Maksat','Ilki maksadyňy ýaz');return;}if(el)el.textContent='AI marşrut düzýär…';
+  try{const txt=await aiCall(MENTOR+" Maksada ýetmek üçin häzirki ýagdaýdan başlap ädimme-ädim (1,2,3...) marşrut ber: indiki ädim näme, näme öwrenmeli, päsgelçilikler we mümkinçilikler. Gysga.",userContext()+"\n\nMAKSADYM: "+db.gps.target+"\n\nMaňa şu maksada ýetmegiň anyk marşrutyny ber.",900);if(el)el.innerHTML=esc(txt||'Jogap ýok').replace(/\n/g,'<br>');}
+  catch(e){if(el)el.textContent='AI jogap berip bilmedi. Internet barlygyny barla — AI diňe Claude.ai içinde işleýär.';}
+}
+
+/* ---- GELJEKKI MEN ---- */
+function rFuture(){
+  return head('Geljekki men')+`<div class="card ai-card"><div class="hd">⏳ Geljekki wersiýaň</div><p>Häzirki ýoluň we maksatlaryň dowam etse, AI seniň geljekki görnüşiňi suratlandyrýar. Ýyl saýla:</p>
+  <div style="display:flex;gap:8px;margin-top:12px;">${[1,5,10].map(y=>`<button class="btn-pri" style="flex:1;padding:11px;border-radius:12px;border:none;font-weight:700;font-family:inherit;cursor:pointer;" onclick="futureGen(${y})">${y} ýyl</button>`).join('')}</div></div>
+  <div id="futureOut"></div>`;
+}
+async function futureGen(y){
+  const el=document.getElementById('futureOut');if(el)el.innerHTML='<div class="card">AI geljegiňi modelleýär…</div>';
+  try{const txt=await aiCall(MENTOR+" Ulanyjynyň häzirki endiklerine, maksatlaryna we depginine esaslanyp, "+y+" ýyldan soňky görnüşini ruhlandyryjy we anyk suratlandyr: başarnyklary, üstünlikleri, durmuşy. Ýöne dowam etmeli ädimleri hem belle.",userContext()+"\n\n"+y+" ýyldan soňky men nähili bolaryn?",900);if(el)el.innerHTML='<div class="card"><div style="font-weight:800;color:var(--ink);margin-bottom:8px;">⏳ '+y+' ýyldan soň</div><div style="font-size:14px;color:var(--ink);line-height:1.6;">'+esc(txt||'Jogap ýok').replace(/\n/g,'<br>')+'</div></div>';}
+  catch(e){if(el)el.innerHTML='<div class="card">AI jogap berip bilmedi. Internet barlygyny barla — AI diňe Claude.ai içinde işleýär.</div>';}
+}
+
+/* ---- ÇAKLAÝJY ULGAM ---- */
+function rPredict(){
+  const now=new Date();
+  const overdue=db.tasks.filter(t=>!t.done&&t.time&&new Date(t.time)<now).length;
+  const open=db.tasks.filter(t=>!t.done).length;
+  const di=now.getDay();const dix=di===0?6:di-1;const hToday=db.habits.filter(h=>h.days[dix]).length;
+  const stress=db.profile.stress>=0?(4-db.profile.stress)/4*100:40;
+  let burnout=Math.min(100,Math.round(overdue*12+stress*0.5+(open>8?20:0)));
+  const hMax=(db.habits.length||1)*7,hAll=db.habits.reduce((a,h)=>a+h.days.reduce((x,y)=>x+y,0),0);
+  const habitRate=Math.round(hAll/hMax*100);
+  const goalRate=db.goals.length?Math.round((db.goals.reduce((a,g)=>a+g.p,0)/db.goals.length*0.6)+(habitRate*0.4)):0;
+  const prod=growthOverall();
+  const lvl=v=>v>=66?'ýokary':v>=33?'orta':'pes';
+  const bar=(lab,v,col)=>`<div class="abar"><div class="lab"><span>${lab}</span><span style="color:${col}">${v}% · ${lvl(v)}</span></div><div class="track"><i style="width:${v}%;background:${col}"></i></div></div>`;
+  return head('Çaklaýjy ulgam')+`
+  <div class="card warn-card"><div class="hd">🔥 Burnout (ýadawlyk) töwekgelçiligi</div><div style="font-family:'Bricolage Grotesque',sans-serif;font-size:32px;color:var(--ink);">${burnout}% <span style="font-size:15px;color:var(--muted)">${lvl(burnout)}</span></div><div style="font-size:12.5px;color:var(--ink);margin-top:6px;">${burnout>=66?'Dynç al, işleri azalt — özüňe seret 🤝':burnout>=33?'Birneme basyş bar, deňagramlylygy sakla':'Ýagdaýyň gowy, şeýle dowam et 👍'}</div></div>
+  <div class="card"><div style="font-weight:800;color:var(--ink);margin-bottom:12px;">📈 Üstünlik çaklamasy</div>
+  ${bar('Maksat üstünlik derejesi',goalRate,'#34d399')}
+  ${bar('Endik dowamlylygy',habitRate,'#22d3ee')}
+  ${bar('Umumy depgin',prod,'#a78bfa')}</div>
+  <div class="card ai-card"><div class="hd">🔮 AI çaklamasy <span class="tag">AI</span></div><p id="predOut">AI seniň häzirki depginiňe görä geljekki netijeleriňi çaklap, maslahat berer.</p><button class="btn-pri" style="width:100%;margin-top:12px;padding:11px;border-radius:13px;border:none;font-weight:700;font-family:inherit;cursor:pointer;" onclick="predAI(${burnout},${goalRate},${habitRate})">🔮 Çakla</button></div>`;
+}
+async function predAI(b,g,h){
+  const el=document.getElementById('predOut');if(el)el.textContent='AI çaklaýar…';
+  try{const txt=await aiCall(MENTOR+" Görkezijiler boýunça gysga çaklama we anyk maslahat ber.",userContext()+`\n\nÇaklama girişleri: burnout ${b}%, maksat üstünligi ${g}%, endik dowamlylygy ${h}%.\n\nGeljek hakda gysga çaklama we nämä üns bermelidigimi aýt.`,700);if(el)el.innerHTML=esc(txt||'Jogap ýok').replace(/\n/g,'<br>');}
+  catch(e){if(el)el.textContent='AI jogap berip bilmedi. Internet barlygyny barla — AI diňe Claude.ai içinde işleýär.';}
+}
+
+/* ---- BILIM GRAFY ---- */
+function rGraph(){
+  const nodes=[['Maksatlar',db.goals.length,'goals','#34d399'],['Endikler',db.habits.length,'habits','#22d3ee'],['Kitaplar',(db.books||[]).length,'books','#a78bfa'],['Bellikler',db.notes.length,'notes','#38bdf8'],['Başarnyklar',(db.identity.strengths||[]).length,'identity','#fbbf24'],['Adamlar',(db.contacts||[]).length,'social','#fb7185']];
+  const cx=160,cy=160,R=110;const N=nodes.length;
+  let lines='',dots='';
+  nodes.forEach((n,i)=>{const ang=(-90+i*360/N)*Math.PI/180;const x=cx+R*Math.cos(ang),y=cy+R*Math.sin(ang);
+    lines+=`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="var(--line)" stroke-width="1.5"/>`;
+    dots+=`<g style="cursor:pointer" onclick="nav('${n[2]}')"><circle cx="${x}" cy="${y}" r="26" fill="${n[3]}" opacity="0.9"/><text x="${x}" y="${y-2}" font-size="14" font-weight="800" fill="#06121a" text-anchor="middle">${n[1]}</text><text x="${x}" y="${y+34}" font-size="10" font-weight="700" fill="var(--muted)" text-anchor="middle">${n[0]}</text></g>`;});
+  return head('Bilim grafy')+`<div class="card ai-card"><div class="hd">🕸️ Durmuşyň baglanyşyklary</div><p>Maksatlaryň, endikleriň, kitaplaryň we adamlaryň — hemmesi bir merkezde baglanyşýar. Düwüne bas — şol modula geçýär.</p></div>
+  <div class="card"><svg viewBox="0 0 320 340" style="width:100%;max-width:340px;display:block;margin:0 auto;">${lines}${dots}<circle cx="${cx}" cy="${cy}" r="34" fill="url(#me)"/><text x="${cx}" y="${cy+1}" font-size="14" font-weight="800" fill="#06121a" text-anchor="middle">MEN</text><text x="${cx}" y="${cy+16}" font-size="9" font-weight="700" fill="#06121a" text-anchor="middle">Lvl ${level()}</text><defs><linearGradient id="me"><stop offset="0%" stop-color="#2dd4bf"/><stop offset="100%" stop-color="#a78bfa"/></linearGradient></defs></svg></div>`;
+}
+
+/* ---- GOALS ---- */
+function rGoals(){
+  const items=db.goals.length?db.goals.map(g=>`<div class="card"><div class="row"><div class="gtitle">${esc(g.text)}</div><span class="del" onclick="rm('goals','${g.id}')">×</span></div><div class="bar"><i style="width:${g.p}%"></i></div><div class="gctl"><span class="pct">${g.p}%</span><span class="gbtns"><button onclick="goalStep('${g.id}',-10)">−</button><button onclick="goalStep('${g.id}',10)">+</button></span></div></div>`).join(''):`<div class="empty">Entek maksat ýok. Birinjini goş!</div>`;
+  return head('Maksatlar',db.goals.length)+`<div class="addbar"><input id="i" placeholder="Täze maksat goş..." onkeydown="if(event.key==='Enter')addGoal()"><button onclick="addGoal()">+</button></div>`+items;
+}
+function addGoal(){const e=document.getElementById('i');const v=e.value.trim();if(!v)return;db.goals.unshift({id:uid(),text:v,p:0});addXP(5);save();render();}
+function goalStep(id,d){const g=db.goals.find(x=>x.id===id);const was=g.p;g.p=Math.max(0,Math.min(100,g.p+d));if(g.p===100&&was<100)addXP(20);save();render();}
+
+/* ---- TASKS ---- */
+function rTasks(){
+  const now=new Date();const left=db.tasks.filter(t=>!t.done).length;
+  const items=db.tasks.length?db.tasks.map(t=>{const over=t.time&&!t.done&&new Date(t.time)<now;const chip=`<span class="timebadge ${over?'over':''}" style="cursor:pointer" onclick="setTaskTime('${t.id}')">${t.time?(over?'⚠️ ':'🕐 ')+fmtTime(t.time):'⏰ Wagt belle'}</span>`;return `<div class="card"><div class="row"><div class="check ${t.done?'done':''}" onclick="toggleTask('${t.id}')"></div><div class="tcol"><div class="ctext ${t.done?'done':''}">${esc(t.text)}</div>${chip}</div><span class="del" onclick="rm('tasks','${t.id}')">×</span></div></div>`;}).join(''):`<div class="empty">Etmeli işiň ýok. Dynç al 😌</div>`;
+  return head('Etmeli işler',left+' galdy')+`<div class="addbar"><input id="i" placeholder="Täze iş goş..." onkeydown="if(event.key==='Enter')addTask()"><button onclick="addTask()">+</button></div><div class="timeset"><span>🕐 Wagt belle:</span><input type="datetime-local" id="it"></div>`+items;
+}
+function addTask(){const e=document.getElementById('i');const v=e.value.trim();if(!v)return;const t=document.getElementById('it').value||'';db.tasks.unshift({id:uid(),text:v,done:false,time:t,fired:false});if(t){askNotif();showToast('🕐','Ýatlatma bellendi',v+' · '+fmtTime(t));}addXP(2);save();render();}
+async function setTaskTime(id){
+  const t=db.tasks.find(x=>x.id===id);if(!t)return;
+  const cur=t.time?t.time.slice(11,16):'';
+  const r=await askModal({title:'Ýatlatma wagty (sagat:minut, mysal 14:30)',fields:[{key:'hm',label:'Wagt — boş goýsaň aýrylar',value:cur}],okText:'Belle'});
+  if(r===null)return;const s=(r.hm||'').trim();
+  if(s===''){t.time='';t.fired=false;save();render();showToast('🕐','Aýryldy','Wagt belligi aýryldy');return;}
+  if(!/^([01]?\d|2[0-3]):[0-5]\d$/.test(s)){showToast('⚠️','Nädogry format','Mysal: 08:30');return;}
+  const hm=s.length===4?'0'+s:s;const d=new Date();const iso=d.toISOString().slice(0,10)+'T'+hm;
+  t.time=iso;t.fired=false;save();render();askNotif();
+  const past=new Date(iso)<new Date();
+  showToast('🕐',past?'Wagt bellendi (geçen)':'Ýatlatma bellendi',t.text+' · '+hm+(past?' — şu gün geçdi':''));
+}
+function toggleTask(id){const t=db.tasks.find(x=>x.id===id);t.done=!t.done;if(t.done)addXP(5);save();render();}
+
+/* ---- HABITS ---- */
+function rHabits(){
+  const items=db.habits.length?db.habits.map(h=>{const s=h.days.reduce((a,b)=>a+b,0);return `<div class="card"><div class="row"><div class="htitle">${esc(h.text)}</div><span class="hclock" onclick="setHabitTime('${h.id}')">⏰ ${h.rt||'wagt'}</span><span class="streak">${s}/7</span><span class="del" onclick="rm('habits','${h.id}')">×</span></div><div class="week">${h.days.map((d,i)=>`<div class="day"><small>${WD[i]}</small><div class="pill ${d?'fill':''}" onclick="toggleDay('${h.id}',${i})">${d?'✓':''}</div></div>`).join('')}</div></div>`;}).join(''):`<div class="empty">Endik goşup, her gün belle 🔥</div>`;
+  return head('Endikler',db.habits.length)+`<div class="addbar"><input id="i" placeholder="Täze endik goş..." onkeydown="if(event.key==='Enter')addHabit()"><button onclick="addHabit()">+</button></div>`+items;
+}
+function addHabit(){const e=document.getElementById('i');const v=e.value.trim();if(!v)return;db.habits.unshift({id:uid(),text:v,days:[0,0,0,0,0,0,0],rt:'',lastFired:''});addXP(3);save();render();}
+function toggleDay(id,i){const h=db.habits.find(x=>x.id===id);h.days[i]=h.days[i]?0:1;if(h.days[i])addXP(3);save();render();}
+async function setHabitTime(id){const h=db.habits.find(x=>x.id===id);const r=await askModal({title:'Gündelik bildiriş wagty (sagat:minut)',fields:[{key:'hm',label:'Wagt — boş = aýyr',value:h.rt||'08:00'}],okText:'Belle'});if(r===null)return;const s=(r.hm||'').trim();if(s===''){h.rt='';}else if(/^([01]?\d|2[0-3]):[0-5]\d$/.test(s)){h.rt=s.length===4?'0'+s:s;}else{showToast('⚠️','Nädogry format','Mysal: 08:30');return;}askNotif();save();render();}
+
+/* ---- NOTES ---- */
+function rNotes(){
+  const items=db.notes.length?db.notes.map(n=>`<div class="card"><div class="row"><div class="ntitle" style="flex:1">${esc(n.title)}</div><span class="del" onclick="rm('notes','${n.id}')">×</span></div>${n.body?`<div class="nbody">${esc(n.body)}</div>`:''}${noteAttach(n)}<div style="margin-top:10px"><span class="hclock" onclick="pickUp('note:${n.id}')">📎 ${n.file?'Faýly çalyş':'Faýl/surat goş'}</span></div></div>`).join(''):`<div class="empty">Pikirleriňi bu ýerde ýaz ✍️</div>`;
+  return head('Bellikler',db.notes.length)+`<div class="addbar"><input id="i" placeholder="Belligiň ady..." onkeydown="if(event.key==='Enter')addNote()"><button onclick="addNote()">+</button></div>`+items;
+}
+function noteAttach(n){if(!n.file||!n.fkey)return '';if((n.file.type||'').startsWith('image'))return `<div class="note-img" id="thumb_${n.fkey}" onclick="openStored('${n.fkey}','${esc(n.file.name)}')"></div>`;return `<div class="file-chip" onclick="openStored('${n.fkey}','${esc(n.file.name)}')">${fileEmoji(n.file.type,n.file.name)} ${esc(n.file.name)} · ${fmtSize(n.file.size)}</div>`;}
+async function addNote(){const e=document.getElementById('i');const v=e.value.trim();if(!v)return;const r=await askModal({title:'Belligiň mazmuny (islege görä)',fields:[{key:'body',label:'Mazmun — boş hem bolýar'}],okText:'Goş'});const b=r?(r.body||''):'';db.notes.unshift({id:uid(),title:v,body:b});addXP(2);save();render();}
+
+/* ---- JOURNAL ---- */
+function rJournal(){
+  const today=new Date().toISOString().slice(0,10);const moods=['😞','😕','😐','🙂','😄'];
+  const tj=db.journal.find(x=>x.date===today);
+  const list=db.journal.length?db.journal.slice().reverse().map(j=>`<div class="card"><div class="row"><div class="ntitle" style="flex:1">${moods[j.mood]||'📝'} ${new Date(j.date).toLocaleDateString('ru-RU',{day:'numeric',month:'long'})}</div></div><div class="nbody">${esc(j.text)}</div></div>`).join(''):'';
+  return head('Gündelik')+`<div class="card"><div style="font-weight:800;color:var(--ink);margin-bottom:8px;">Bu günki ýazgyň</div><textarea id="jt" placeholder="Bu gün näme boldy, näme duýduň?" style="width:100%;min-height:90px;border:1.5px solid var(--line);background:var(--card);border-radius:14px;padding:12px;font-family:inherit;font-size:14px;color:var(--ink);resize:vertical;outline:none;">${tj?esc(tj.text):''}</textarea><button class="btn-pri" style="margin-top:10px;padding:11px 20px;border-radius:13px;border:none;font-weight:700;font-family:inherit;cursor:pointer;" onclick="saveJournal()">Ýatda sakla</button></div>`+(list?`<div class="sect-label">Geçmiş ýazgylar</div>`+list:'');
+}
+function saveJournal(){const t=document.getElementById('jt').value.trim();if(!t){showToast('✍️','Boş','Bir zat ýaz');return;}const today=new Date().toISOString().slice(0,10);let j=db.journal.find(x=>x.date===today);if(j)j.text=t;else db.journal.push({date:today,text:t,mood:db.profile.mood});addXP(5);save();showToast('📖','Ýazyldy','Gündelik ýatda saklandy');render();}
+
+/* ---- FINANCE ---- */
+function rFinance(){
+  const inc=db.finance.filter(f=>f.type==='in').reduce((a,b)=>a+b.amount,0);
+  const out=db.finance.filter(f=>f.type==='out').reduce((a,b)=>a+b.amount,0);
+  const bal=inc-out;
+  const list=db.finance.length?db.finance.slice().reverse().map(f=>`<div class="card"><div class="row"><div style="flex:1"><div class="txt">${esc(f.label)}</div><small style="color:var(--muted)">${new Date(f.date).toLocaleDateString('ru-RU',{day:'numeric',month:'short'})}</small></div><div class="${f.type==='in'?'amt-in':'amt-out'}">${f.type==='in'?'+':'−'}${f.amount} m.</div><span class="del" onclick="rm('finance','${f.id}')">×</span></div></div>`).join(''):`<div class="empty">Girdeji/çykdajy goş 💰</div>`;
+  return head('Maliýe')+`<div class="card"><div class="fin-bal"><small>Galyndy</small><b>${bal} m.</b></div><div class="fin-split"><div class="fs inn"><b>+${inc}</b><small>Girdeji</small></div><div class="fs out"><b>−${out}</b><small>Çykdajy</small></div></div></div>
+  <div style="display:flex;gap:10px;margin:0 2px 14px;"><button class="btn-pri" style="flex:1;padding:13px;border-radius:14px;border:none;font-weight:700;font-family:inherit;cursor:pointer;" onclick="addFin('in')">+ Girdeji</button><button class="btn-sec" style="flex:1;padding:13px;border-radius:14px;font-weight:700;font-family:inherit;cursor:pointer;" onclick="addFin('out')">− Çykdajy</button></div>`+list;
+}
+async function addFin(type){const r=await askModal({title:type==='in'?'Girdeji goş':'Çykdajy goş',fields:[{key:'label',label:type==='in'?'Ady (mysal: Aýlyk)':'Ady (mysal: Nahar)'},{key:'amt',label:'Mukdary (manat)',type:'number',inputmode:'decimal'}],okText:'Goş'});if(!r||!(r.label||'').trim())return;const a=parseFloat(r.amt);if(isNaN(a)||a<=0){showToast('⚠️','Nädogry','Dogry san gir');return;}db.finance.push({id:uid(),type,label:r.label.trim(),amount:a,date:new Date().toISOString()});addXP(2);save();render();}
+
+/* ---- HEALTH ---- */
+function rHealth(){
+  const w=db.health.weight.length?db.health.weight[db.health.weight.length-1].kg:'—';
+  return head('Saglyk')+`
+  <div class="card"><div style="font-weight:800;color:var(--ink);margin-bottom:6px;">💧 Suw içmek</div><div class="big-num">${db.health.water} <span style="font-size:18px;color:var(--muted)">stakan</span></div><div class="water-row"><button onclick="water(-1)">−</button><button onclick="water(1)">+</button></div><div style="text-align:center;font-size:12px;color:var(--muted)">Maksat: 8 stakan/gün</div></div>
+  <div class="card"><div style="font-weight:800;color:var(--ink);margin-bottom:6px;">⚖️ Agram</div><div class="big-num">${w} <span style="font-size:18px;color:var(--muted)">kg</span></div><button class="btn-pri" style="width:100%;margin-top:10px;padding:11px;border-radius:13px;border:none;font-weight:700;font-family:inherit;cursor:pointer;" onclick="logWeight()">Agram belle</button></div>`;
+}
+function water(d){db.health.water=Math.max(0,db.health.water+d);if(d>0)addXP(1);save();render();}
+async function logWeight(){const r=await askModal({title:'Häzirki agramyň',fields:[{key:'kg',label:'Agram (kg)',type:'number',inputmode:'decimal'}],okText:'Belle'});if(!r)return;const k=parseFloat(r.kg);if(isNaN(k)||k<=0)return;db.health.weight.push({date:new Date().toISOString(),kg:k});addXP(3);save();render();}
+
+/* ---- FOCUS / POMODORO ---- */
+let fTime=25*60,fRun=false,fInt=null;
+function rFocus(){return head('Fokus · Pomodoro')+`<div class="card"><div class="timer"><div class="tt" id="tt">25:00</div><div style="color:var(--muted);font-size:13px;margin-top:6px;">Tamamlanan sessiýa: ${db.focusDone}</div><div class="ctrls"><button class="btn-pri" id="fbtn" onclick="fToggle()">Başla</button><button class="btn-sec" onclick="fReset()">Täzele</button></div></div></div><div class="card ai-card"><div class="hd">🍅 Pomodoro tehnikasy</div><p>25 minut bökdençsiz işle, soň 5 minut dynç al. Bu ünsüňi ýiteltmän köp iş bitirmäge kömek edýär.</p></div>`;}
+function paintTimer(){const m=String(Math.floor(fTime/60)).padStart(2,'0'),s=String(fTime%60).padStart(2,'0');const el=document.getElementById('tt');if(el)el.textContent=m+':'+s;const b=document.getElementById('fbtn');if(b)b.textContent=fRun?'Dur':'Başla';}
+function fToggle(){fRun=!fRun;if(fRun){fInt=setInterval(()=>{fTime--;if(fTime<=0){clearInterval(fInt);fRun=false;db.focusDone++;addXP(10);save();notify('🍅','Sessiýa gutardy!','5 minut dynç al');fTime=25*60;}paintTimer();},1000);}else{clearInterval(fInt);}paintTimer();}
+function fReset(){clearInterval(fInt);fRun=false;fTime=25*60;paintTimer();}
+
+/* ---- AI ASSISTANT (real Claude) ---- */
+function rAI(){
+  const msgs=chat.map(m=>`<div class="msg ${m.role}">${esc(m.text).replace(/\n/g,'<br>')}</div>`).join('');
+  const intro=chat.length?'':`<div class="msg ai">Salam! Men seniň şahsy AI kömekçiň 🤖 Maksatlaryň, endikleriň ýa-da meýilnamalaryň barada islendik zady sora.</div>`;
+  const clr=chat.length?`<div style="text-align:center;padding:4px 0 8px;"><button onclick="clearChat()" style="background:var(--card2);border:1px solid var(--line);color:var(--muted);border-radius:12px;padding:6px 14px;font-size:12px;font-family:inherit;cursor:pointer;">🗑 Söhbeti arassala</button></div>`:'';
+  return head('AI Kömekçi')+`${clr}<div class="chat" id="chat">${intro}${msgs}</div><div class="chat-input"><input id="ai-in" placeholder="Soragyňy ýaz..." onkeydown="if(event.key==='Enter')sendAI()" style="flex:1;border:1.5px solid var(--line);background:var(--card);border-radius:15px;padding:13px 15px;font-family:inherit;font-size:15px;color:var(--ink);outline:none;"><button class="addbar" style="border:none;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border-radius:15px;width:48px;font-size:20px;cursor:pointer;" onclick="sendAI()">➤</button></div>`;
+}
+async function clearChat(){if(!(await confirmModal('AI söhbetini arassalamakçymy?')))return;chat=[];db.aiChat=[];save();render();}
+function scrollChat(){const c=document.getElementById('chat');if(c)c.scrollIntoView({block:'end'});const v=document.getElementById('view');if(v)v.scrollTop=v.scrollHeight;}
+async function sendAI(){
+  const inp=document.getElementById('ai-in');const q=inp.value.trim();if(!q)return;
+  chat.push({role:'me',text:q});chat.push({role:'ai',text:'Pikirlenýär…',load:true});render();
+  const ctx=userContext();
+  try{
+    const data=await callAnthropic({model:"claude-sonnet-4-20250514",max_tokens:1000,system:"Sen meniň şahsy 'My Life System' Durmuş OS AI kömekçim. Diňe MENIŇ aşakdaky maglumatlaryma, maksatlaryma we durmuşyma gönükdirilen jogap ber. Hökman TÜRKMEN dilinde, gysga, hoşniýetli, anyk we ruhlandyryjy bol.",messages:[{role:"user",content:ctx+"\n\nSORAGYM: "+q}]});
+    const txt=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n').trim();
+    chat=chat.filter(m=>!m.load);chat.push({role:'ai',text:txt||'Bagyşla, jogap alyp bilmedim.'});
+  }catch(e){
+    chat=chat.filter(m=>!m.load);chat.push({role:'ai',text:'AI jogap berip bilmedi 😕 Internetiň barlygyny barla. AI diňe app Claude.ai içinde açykka işleýär (faýly ýükläp aýratyn açsaň işlemeýär).'});
+  }
+  db.aiChat=chat.filter(m=>!m.load);save();
+  render();
+}
+
+/* ---- ANALYTICS ---- */
+function rAnalytics(){
+  const tDone=db.tasks.filter(t=>t.done).length,tTot=db.tasks.length||1;
+  const hAll=db.habits.reduce((a,h)=>a+h.days.reduce((x,y)=>x+y,0),0),hMax=(db.habits.length||1)*7;
+  const gAvg=db.goals.length?Math.round(db.goals.reduce((a,g)=>a+g.p,0)/db.goals.length):0;
+  const ps=prodScore();
+  const bar=(lab,val,col)=>`<div class="abar"><div class="lab"><span>${lab}</span><span>${val}%</span></div><div class="track"><i style="width:${val}%;background:${col}"></i></div></div>`;
+  return head('Analitika')+`<div class="card"><div style="font-weight:800;color:var(--ink);margin-bottom:14px;">📊 Öndürjilik hasabaty</div>
+  ${bar('Bu günki skor',ps,'linear-gradient(90deg,#7c6cff,#b07cff)')}
+  ${bar('Bitirilen işler',Math.round(tDone/tTot*100),'linear-gradient(90deg,#3fae7d,#5dd6a0)')}
+  ${bar('Endik dowamlylygy',Math.round(hAll/hMax*100),'linear-gradient(90deg,#5b8def,#7aa8ff)')}
+  ${bar('Maksat ortalamasy',gAvg,'linear-gradient(90deg,#9b6bff,#c19bff)')}</div>
+  <div class="mini-stats"><div class="ms"><b>${db.profile.xp}</b><small>Jemi XP</small></div><div class="ms"><b>${level()}</b><small>Dereje</small></div><div class="ms"><b>${db.focusDone}</b><small>Fokus</small></div></div>
+  <div class="card ai-card"><div class="hd">🤖 AI Netije <span class="tag">AI</span></div><p>${ps>=70?'Ajaýyp gidýär! Şu depgini sakla 🔥':ps>=40?'Gowy başlangyç. Ýene birneme tagalla et 💪':'Häzir pesräk — kiçi ädimlerden başla, hökman gowulaşar 🌱'}</p></div>`;
+}
+
+/* ---- KÄMILLIK / GROWTH ANALYSIS ---- */
+function lifeAreas(){
+  const gAvg=db.goals.length?Math.round(db.goals.reduce((a,g)=>a+g.p,0)/db.goals.length):0;
+  const tTot=db.tasks.length,tDone=db.tasks.filter(t=>t.done).length;
+  const tPct=tTot?Math.round(tDone/tTot*100):0;
+  const hMax=(db.habits.length||0)*7,hAll=db.habits.reduce((a,h)=>a+h.days.reduce((x,y)=>x+y,0),0);
+  const hPct=hMax?Math.round(hAll/hMax*100):0;
+  const waterPct=Math.min(100,Math.round(db.health.water/8*100));
+  const inc=db.finance.filter(f=>f.type==='in').reduce((a,b)=>a+b.amount,0);
+  const out=db.finance.filter(f=>f.type==='out').reduce((a,b)=>a+b.amount,0);
+  const finPct=db.finance.length?(inc>=out?100:Math.max(15,Math.round(inc/(out||1)*100))):0;
+  const learnPct=Math.min(100,db.focusDone*20+db.journal.length*10);
+  const moodPct=db.profile.mood>=0?Math.round(db.profile.mood/4*100):50;
+  return [
+    {n:'Maksatlar',v:gAvg,c:'#9b6bff'},{n:'Öndürjilik',v:tPct,c:'#7c6cff'},
+    {n:'Endikler',v:hPct,c:'#3fae7d'},{n:'Saglyk',v:waterPct,c:'#5b8def'},
+    {n:'Maliýe',v:finPct,c:'#ffb020'},{n:'Aň-paýhas',v:learnPct,c:'#b07cff'},
+    {n:'Ruhy ýagdaý',v:moodPct,c:'#3fc6c6'}
+  ];
+}
+function growthOverall(){const a=lifeAreas();return Math.round(a.reduce((s,x)=>s+x.v,0)/a.length);}
+function growthMsg(p){return p>=75?'Ajaýyp! Sen deňagramly we güýçli ösýäň 🔥':p>=50?'Gowy gidýär — ýene azajyk tagalla bilen has belende çykarsyň 💪':p>=25?'Başlangyç bar. Her gün kiçi ädim ät, netije hökman geler 🌱':'Häzir pesräk, ýöne alada etme — bilelikde ýokary galdyrarys. Bir kiçi işden başla 🤝';}
+function radarSVG(areas){
+  const cx=150,cy=150,R=100,N=areas.length;
+  const pt=(i,r)=>{const ang=(-90+i*360/N)*Math.PI/180;return [cx+r*Math.cos(ang),cy+r*Math.sin(ang)];};
+  let rings='';[0.25,0.5,0.75,1].forEach(f=>{const p=areas.map((_,i)=>pt(i,R*f).join(',')).join(' ');rings+=`<polygon points="${p}" fill="none" stroke="var(--line)" stroke-width="1"/>`;});
+  let axes='',labels='';
+  areas.forEach((a,i)=>{const e=pt(i,R);axes+=`<line x1="${cx}" y1="${cy}" x2="${e[0]}" y2="${e[1]}" stroke="var(--line)" stroke-width="1"/>`;const l=pt(i,R+24);labels+=`<text x="${l[0]}" y="${l[1]}" font-size="10" font-weight="700" fill="var(--muted)" text-anchor="middle" dominant-baseline="middle">${a.n}</text>`;});
+  const poly=areas.map((a,i)=>pt(i,R*a.v/100).join(',')).join(' ');
+  const dots=areas.map((a,i)=>{const d=pt(i,R*a.v/100);return `<circle cx="${d[0]}" cy="${d[1]}" r="3.5" fill="${a.c}"/>`;}).join('');
+  return `<svg viewBox="0 0 300 300" style="width:100%;max-width:300px;display:block;margin:0 auto;">${rings}${axes}<polygon points="${poly}" fill="rgba(255,93,115,.22)" stroke="#7c6cff" stroke-width="2"/>${dots}${labels}</svg>`;
+}
+function rGrowth(){
+  const areas=lifeAreas();const gp=growthOverall();const C=2*Math.PI*52;
+  const bars=areas.map(a=>`<div class="abar"><div class="lab"><span>${a.n}</span><span style="color:${a.c}">${a.v}%</span></div><div class="track"><i style="width:${a.v}%;background:${a.c}"></i></div></div>`).join('');
+  return head('Kämillik merkezi')+`
+  <div class="card"><div class="ring" style="width:124px;height:124px;margin:2px auto 8px;"><svg width="124" height="124"><circle cx="62" cy="62" r="52" stroke="var(--accent-soft)" stroke-width="11" fill="none"/><circle cx="62" cy="62" r="52" stroke="url(#gg)" stroke-width="11" fill="none" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C-(gp/100)*C}"/><defs><linearGradient id="gg"><stop offset="0%" stop-color="#7c6cff"/><stop offset="100%" stop-color="#b07cff"/></linearGradient></defs></svg><div class="pscore"><b style="font-size:28px">${gp}%</b><small>KÄMILLIK</small></div></div><p style="text-align:center;color:var(--muted);font-size:13.5px;line-height:1.55;">${growthMsg(gp)}</p></div>
+  <div class="card"><div style="font-weight:800;color:var(--ink);margin-bottom:10px;">🧭 Durmuş deňagramlylygy</div>${radarSVG(areas)}</div>
+  <div class="card"><div style="font-weight:800;color:var(--ink);margin-bottom:12px;">Ugurlar boýunça</div>${bars}</div>
+  <div class="card ai-card"><div class="hd">🤖 AI Doly analiz <span class="tag">AI</span></div><p id="aiReport">Düwmä bas — AI ähli ugurlaryňy analiz edip, iň pes taraplaryňy güýçlendirmek üçin şahsy ösüş meýilnamasyny berer.</p><button class="btn-pri" style="width:100%;margin-top:12px;padding:11px;border-radius:13px;border:none;font-weight:700;font-family:inherit;cursor:pointer;" onclick="aiAnalyze()">📊 Meni analiz et</button></div>`;
+}
+
+/* ---- RUHY GOLDAW / WELLBEING ---- */
+function rMind(){
+  const tips=['3 gezek çuň dem al — bu nerw ulgamyňy köşeşdirýär.','Häzir diňe bir kiçi işe ünsüňi ber. Galanlary garaşyp biler.','Özüňe mähirli bol — kämillik bir günde däl, ýoldur.','5 minut açyk howada gezelenç et, beýniň dynç alar.'];
+  const tip=tips[new Date().getMinutes()%tips.length];const sm=['😣','😟','😐','🙂','😌'];
+  return head('Ruhy goldaw')+`
+  <div class="card"><div style="font-weight:800;color:var(--ink);margin-bottom:6px;">Häzir özüňi nähili duýýaň?</div><div class="mood">${sm.map((m,i)=>`<span class="${db.profile.stress===i?'sel':''}" onclick="setStress(${i})">${m}</span>`).join('')}</div></div>
+  <div class="card" style="text-align:center;"><div style="font-weight:800;color:var(--ink);margin-bottom:6px;">🧘 Köşeşdiriji dem alyş</div><div class="breath" id="breathCircle"><span id="breathTxt">Başla</span></div><div style="color:var(--muted);font-size:12.5px;margin:12px 0 2px;">4 sek dem al · 4 sek sakla · 4 sek goýber</div><button class="btn-pri" id="breathBtn" style="margin-top:10px;padding:11px 26px;border-radius:13px;border:none;font-weight:700;font-family:inherit;cursor:pointer;" onclick="toggleBreath()">Başla</button></div>
+  <div class="card ai-card"><div class="hd">💛 Ýatda sakla</div><p>${tip}</p></div>
+  <div class="card ai-card"><div class="hd">🤝 Goldaw</div><p>Eger uzak wagtdan bäri agyr duýgular, gam ýa-da umytsyzlyk duýýan bolsaň — muny ýeke çekme. Ynanýan biri bilen (dost ýa maşgala) gürleş ýa-da hünärmen lukmana ýüz tut. Bu güýçsüzlik däl — eýsem öz-özüňe alada etmegiň alamaty. Sen ýalňyz dälsiň.</p><button class="btn-pri" style="width:100%;margin-top:12px;padding:11px;border-radius:13px;border:none;font-weight:700;font-family:inherit;cursor:pointer;" onclick="nav('ai')">AI bilen gürleş</button></div>`;
+}
+function setStress(i){db.profile.stress=i;save();render();if(i<=1)showToast('💛','Men ýanyňda','Çuň dem al — bu duýgy geçer. Bir kiçi ädim ät.');}
+
+/* ---- DEM ALYŞ ---- */
+let breathRun=false,breathInt=null,breathPhase=0;
+const BPHASES=[['Dem al',true],['Sakla',null],['Goýber',false],['Sakla',null]];
+function toggleBreath(){breathRun?stopBreath():startBreath();}
+function startBreath(){breathRun=true;breathPhase=0;stepBreath();breathInt=setInterval(stepBreath,4000);}
+function stepBreath(){const c=document.getElementById('breathCircle'),t=document.getElementById('breathTxt'),b=document.getElementById('breathBtn');if(!c){stopBreath();return;}const ph=BPHASES[breathPhase%BPHASES.length];if(t)t.textContent=ph[0];if(b)b.textContent='Dur';if(ph[1]===true)c.classList.add('big');else if(ph[1]===false)c.classList.remove('big');breathPhase++;}
+function stopBreath(){breathRun=false;clearInterval(breathInt);const c=document.getElementById('breathCircle');if(c)c.classList.remove('big');const t=document.getElementById('breathTxt');if(t)t.textContent='Başla';const b=document.getElementById('breathBtn');if(b)b.textContent='Başla';}
+
+/* ---- AI DOLANDYRYŞ ---- */
+async function callAnthropic(body){
+  try{const r=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});if(r.ok)return await r.json();}catch(e){}
+  const r2=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(!r2.ok)throw new Error('http '+r2.status);return await r2.json();
+}
+async function aiCall(system,user,maxtok){
+  const d=await callAnthropic({model:"claude-sonnet-4-20250514",max_tokens:maxtok||900,system,messages:[{role:"user",content:user}]});
+  return (d.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n').trim();
+}
+async function aiAnalyze(){
+  const el=document.getElementById('aiReport');if(el)el.textContent='AI seni analiz edýär…';
+  const areas=lifeAreas();const gp=growthOverall();
+  const data=`Umumy kämillik: ${gp}%. Ugurlar: ${areas.map(a=>a.n+' '+a.v+'%').join(', ')}. Maksatlar: ${db.goals.map(g=>g.text).join(', ')||'ýok'}. Açyk işler: ${db.tasks.filter(t=>!t.done).map(t=>t.text).join(', ')||'ýok'}. Ruhy ýagdaý belgisi: ${db.profile.stress>=0?db.profile.stress+'/4':'bellenmedik'}.`;
+  try{
+    const txt=await aiCall("Sen şahsy ösüş boýunça AI mentor. Diňe TÜRKMEN dilinde, mähirli we ruhlandyryjy ýaz. Ulanyjynyň durmuş ugurlary boýunça göterimlere seret, iň pes 2-3 ugry kesgitläp, olary güýçlendirmek üçin anyk we amaly maslahat ber. Gysga abzaslar bilen ýaz, sözbaşysyz. Lukmançylyk diagnozyny goýma; agyr ruhy ýagdaýda mähirli äheňde hünärmene ýa-da ýakynyňa ýüz tutmagy maslahat ber.",data+"\n\nMaňa öňe ösmek üçin gysga şahsy meýilnama we ruhlandyryjy söz ber.",1000);
+    if(el)el.innerHTML=esc(txt||'Jogap alyp bilmedim.').replace(/\n/g,'<br>');
+  }catch(e){if(el)el.textContent='AI jogap berip bilmedi. Internet barlygyny barla — AI diňe Claude.ai içinde işleýär.';}
+}
+async function aiPlan(){
+  const el=document.getElementById('dashSug');if(el)el.textContent='AI meýilnama düzýär…';
+  const open=db.tasks.filter(t=>!t.done);
+  const rout=(db.routine||[]).filter(r=>!rDoneToday(r));
+  if(!open.length&&!rout.length){if(el)el.textContent='Açyk işiň ýok — meýilnama gerek däl 🎉';return;}
+  const data=`Gündelik hökmany işler: ${rout.map(r=>r.text+(r.time?(' ('+r.time+')'):'')).join('; ')||'ýok'}. Beýleki açyk işler: ${open.map(t=>t.text+(t.time?(' ('+fmtTime(t.time)+')'):'')).join('; ')||'ýok'}.`;
+  try{
+    const txt=await aiCall("Sen produktiwlik boýunça AI kömekçi. Diňe TÜRKMEN dilinde jogap ber. Berlen işleri ähmiýet we wagt boýunça tertiple. NOMERLENEN sanaw ber (1, 2, 3...), iň möhüminden başla. Gündelik hökmany işlere ileri tutmak ber. Her setir gysga bolsun. Soňunda bir setir ruhlandyryjy söz goş.",data+"\n\nBu işleri 1, 2, 3 ... görnüşinde tertiple we bu güni hemmesine ýetişer ýaly gysga meýilnama ber.",800);
+    if(el)el.innerHTML=esc(txt||'Jogap alyp bilmedim.').replace(/\n/g,'<br>');
+  }catch(e){if(el)el.textContent='AI jogap berip bilmedi. Internet barlygyny barla — AI diňe Claude.ai içinde işleýär.';}
+}
+
+/* ---- PROFILE / SETTINGS ---- */
+function rProfile(){
+  const dark=db.profile.theme==='dark';
+  return head('Profil')+`<div class="card" style="text-align:center;"><div style="width:74px;height:74px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-2));margin:4px auto 12px;display:grid;place-items:center;font-size:32px;">🧑</div><div style="font-family:'Fraunces',serif;font-size:20px;color:var(--ink);cursor:pointer;" onclick="editName()">${esc(db.profile.name||'Adyňy goş')} ✎</div><div style="color:var(--muted);font-size:13px;margin-top:4px;">Dereje ${level()} · ${db.profile.xp} XP</div><div class="bar" style="margin-top:14px;"><i style="width:${db.profile.xp%100}%"></i></div><div style="font-size:11px;color:var(--muted);margin-top:6px;">Indiki derejä ${100-(db.profile.xp%100)} XP galdy</div></div>
+  <div class="card"><div class="prow"><span class="pl">🌙 Garaňky tema</span><div class="toggle ${dark?'on':''}" onclick="toggleTheme()"></div></div>
+  <div class="prow"><span class="pl">🔔 Bildirişler</span><button class="notifpill" onclick="askNotif()">Rugsat ber</button></div>
+  <div class="prow"><span class="pl">🗑 Ähli maglumaty poz</span><button class="notifpill" onclick="wipe()" style="color:var(--accent)">Poz</button></div></div>
+  <div class="card ai-card"><div class="hd">⭐ Premium</div><p>Çäksiz maksat & endik · AI Coach · Cloud Backup · Premium temalar · Widgetlar · Reklamasyz. (Demo)</p></div>`;
+}
+function toggleTheme(){db.profile.theme=db.profile.theme==='dark'?'light':'dark';applyTheme();save();render();}
+async function wipe(){if(!(await confirmModal('Ähli maglumat pozulsynmy?')))return;(db.books||[]).forEach(b=>idbDel('book_'+b.id));(db.files||[]).forEach(f=>idbDel('file_'+f.id));(db.notes||[]).forEach(n=>{if(n.fkey)idbDel(n.fkey);});(db.vault||[]).forEach(v=>{if(v.fkey)idbDel(v.fkey);});Object.assign(db,{profile:{xp:0,mood:-1,stress:-1,theme:db.profile.theme,vaultPin:''},goals:[],tasks:[],habits:[],notes:[],journal:[],finance:[],health:{water:0,weight:[]},focusDone:0,routine:[],books:[],files:[],identity:{vision:'',mission:'',values:[],strengths:[],weaknesses:[]},vault:[],contacts:[],decisions:[],dna:'',gps:{target:''}});vaultOpen=false;save();updateChrome();showToast('🗑','Pozuldy','Ähli maglumat arassalandy');render();}
+
+/* ---- SOON ---- */
+function rSoon(){return head(TITLES[cur])+`<div class="card ai-card"><div class="hd">🚧 Tiz wagtda</div><p>Bu modul ("${TITLES[cur]}") arhitekturada bar we indiki wersiýada doly işlär. Häzirki demo-da esasy modullar işleýär.</p></div>`;}
+
+/* ---- QUICK ADD ---- */
+function openSheet(){document.getElementById('overlay').classList.add('on');}
+function closeSheet(){document.getElementById('overlay').classList.remove('on');}
+function qAdd(type){closeSheet();if(type==='finance'){nav('finance');setTimeout(()=>addFin('out'),100);return;}if(type==='journal'){nav('journal');return;}nav(type);setTimeout(()=>{const i=document.getElementById('i');if(i)i.focus();},120);}
+
+/* ---- shared ---- */
+function rm(type,id){db[type]=db[type].filter(x=>x.id!==id);save();render();}
+function esc(s){return (s+'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+load();
+</script>
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}</script>
