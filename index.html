@@ -353,7 +353,7 @@ const MODULES=[
  ['analytics','📊','Analitika','linear-gradient(135deg,#a78bfa,#38bdf8)'],
  ['calendar','📅','Kalendar','linear-gradient(135deg,#2dd4bf,#a78bfa)']
 ];
-const db={profile:{xp:0,mood:-1,stress:-1,theme:'dark',vaultPin:'',name:''},goals:[],tasks:[],habits:[],notes:[],journal:[],finance:[],health:{water:0,weight:[]},focusDone:0,routine:[],books:[],files:[],identity:{vision:'',mission:'',values:[],strengths:[],weaknesses:[]},vault:[],contacts:[],decisions:[],dna:'',gps:{target:''},aiChat:[],agentChats:{}};
+const db={profile:{xp:0,mood:-1,stress:-1,theme:'dark',vaultPin:'',name:''},goals:[],tasks:[],habits:[],notes:[],journal:[],finance:[],health:{water:0,weight:[]},focusDone:0,routine:[],books:[],files:[],identity:{vision:'',mission:'',values:[],strengths:[],weaknesses:[]},vault:[],contacts:[],decisions:[],dna:'',gps:{target:''},aiChat:[],agentChats:{},brief:{date:'',text:''}};
 let curBookId=null,curBookText='',readerFs=17,upCtx=null,vaultOpen=false,curAgent=null;
 const agentChats={};let curDec={title:'',pros:[],cons:[]};
 let cur='dashboard', chat=[];
@@ -476,6 +476,7 @@ function rDash(){
     <img src="icon-192.png" alt="logo" style="width:46px;height:46px;border-radius:13px;box-shadow:0 8px 20px -6px rgba(0,0,0,.55);" onerror="this.style.display='none'">
     <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:20px;background:linear-gradient(90deg,#22d3ee,#a78bfa);-webkit-background-clip:text;background-clip:text;color:transparent;">My Life System</div>
   </div>
+  ${dashBriefCard()}
   <div class="card"><div class="hero">
     <div class="ring"><svg width="96" height="96"><circle cx="48" cy="48" r="42" stroke="var(--accent-soft)" stroke-width="9" fill="none"/><circle cx="48" cy="48" r="42" stroke="url(#g)" stroke-width="9" fill="none" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${off}"/><defs><linearGradient id="g"><stop offset="0%" stop-color="#2dd4bf"/><stop offset="100%" stop-color="#22d3ee"/></linearGradient></defs></svg><div class="pscore"><b>${ps}</b><small>SKOR</small></div></div>
     <div class="hx"><h3>Bu günki ýagdaý</h3><p>${tLeft} iş galdy · ${hToday}/${db.habits.length||0} endik · ${level()}-nji dereje</p></div>
@@ -487,8 +488,7 @@ function rDash(){
     <div class="ms"><b>${db.tasks.filter(t=>t.done).length}</b><small>Bitirilen</small></div>
     <div class="ms"><b>${db.profile.xp}</b><small>XP</small></div>
   </div>
-  <div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><span style="font-weight:800;color:var(--ink);font-size:14px;">📈 Kämillik derejäň</span><span style="font-weight:800;color:var(--accent);font-size:16px;">${gp}%</span></div><div class="bar" style="margin:0 0 8px;"><i style="width:${gp}%"></i></div><div style="font-size:12.5px;color:var(--muted);line-height:1.5;">${growthMsg(gp)}</div><button class="btn-pri" style="width:100%;margin-top:12px;padding:11px;border-radius:13px;border:none;font-weight:700;font-family:inherit;cursor:pointer;" onclick="nav('growth')">Doly analizi gör →</button></div>
-  <div class="card ai-card"><div class="hd">🤖 AI Maslahat <span class="tag">AI</span></div><p id="dashSug">${sug}</p><button class="btn-pri" style="width:100%;margin-top:12px;padding:11px;border-radius:13px;border:none;font-weight:700;font-family:inherit;cursor:pointer;" onclick="aiPlan()">📋 AI bu güni tertiplesin</button></div>
+  ${lifeScore360Card()}
   ${dashRoutineCard()}
   ${dashOrderCard()}
   ${dashBookCard()}
@@ -1196,6 +1196,32 @@ async function aiPlan(){
     const txt=await aiCall("Sen produktiwlik boýunça AI kömekçi. Diňe TÜRKMEN dilinde jogap ber. Berlen işleri ähmiýet we wagt boýunça tertiple. NOMERLENEN sanaw ber (1, 2, 3...), iň möhüminden başla. Gündelik hökmany işlere ileri tutmak ber. Her setir gysga bolsun. Soňunda bir setir ruhlandyryjy söz goş.",data+"\n\nBu işleri 1, 2, 3 ... görnüşinde tertiple we bu güni hemmesine ýetişer ýaly gysga meýilnama ber.",800);
     if(el)el.innerHTML=esc(txt||'Jogap alyp bilmedim.').replace(/\n/g,'<br>');
   }catch(e){if(el)el.textContent='AI jogap berip bilmedi. Internet barlygyny barla — AI diňe Claude.ai içinde işleýär.';}
+}
+
+function lifeScore360Card(){
+  const areas=lifeAreas();const gp=growthOverall();
+  const bars=areas.map(a=>`<div style="margin-bottom:9px;"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;"><span style="color:var(--ink);font-weight:600;">${a.n}</span><span style="color:${a.c};font-weight:800;">${a.v}%</span></div><div class="bar" style="margin:0;height:7px;"><i style="width:${a.v}%;background:${a.c};"></i></div></div>`).join('');
+  return `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><span style="font-weight:800;color:var(--ink);font-size:15px;">🎯 Life Score 360°</span><span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:24px;background:linear-gradient(90deg,#22d3ee,#a78bfa);-webkit-background-clip:text;background-clip:text;color:transparent;">${gp}</span></div>${bars}<button class="btn-pri" style="width:100%;margin-top:8px;padding:11px;border-radius:13px;border:none;font-weight:700;font-family:inherit;cursor:pointer;" onclick="nav('growth')">Doly analizi gör →</button></div>`;
+}
+function dashBriefCard(){
+  const has=db.brief&&db.brief.date===todayStr()&&db.brief.text;
+  const body=has
+    ? `<div id="briefOut" style="font-size:13.5px;color:var(--ink);line-height:1.65;">${esc(db.brief.text).replace(/\n/g,'<br>')}</div><button style="width:100%;margin-top:10px;padding:9px;border-radius:12px;border:1px solid var(--line);background:transparent;color:var(--muted);font-weight:600;font-family:inherit;cursor:pointer;font-size:12px;" onclick="aiBrief(true)">🔄 Brifingi täzele</button>`
+    : `<p id="briefOut" style="font-size:13px;color:var(--muted);line-height:1.55;">AI bu gün üçin şahsy brifing taýýarlasyn — işleriňi, endikleriňi we maksatlaryňy seljerip, bu günki esasy 3 prioriteti we ruhlandyryjy söz berer.</p><button class="btn-pri" style="width:100%;margin-top:10px;padding:11px;border-radius:13px;border:none;font-weight:700;font-family:inherit;cursor:pointer;" onclick="aiBrief()">✨ Günlük brifingi al</button>`;
+  return `<div class="card ai-card"><div class="hd">🧠 AI Günlük Brifing <span class="tag">AI</span></div>${body}</div>`;
+}
+async function aiBrief(force){
+  const el=document.getElementById('briefOut');if(el)el.textContent='AI brifing taýýarlaýar…';
+  const di=new Date().getDay();const dix=di===0?6:di-1;
+  const open=db.tasks.filter(t=>!t.done);
+  const rout=(db.routine||[]).filter(r=>!rDoneToday(r));
+  const hToday=db.habits.filter(h=>h.days[dix]);
+  const data=userContext()+`\n\nBU GÜN: ${open.length} açyk iş galdy (${open.map(t=>t.text).join('; ')||'ýok'}). Hökmany tertipden ${rout.length} galdy (${rout.map(r=>r.text).join('; ')||'ýok'}). Bu günki endikler: ${hToday.map(h=>h.text).join(', ')||'ýok'}.`;
+  try{
+    const txt=await aiCall(MENTOR+" Sen meniň ýerime PLANLAÝAN ýerine ýetiriji kömekçim. Maňa GYSGA günlük brifing ber şu tertipde: (1) bir setir mähirli salam we bu günki esasy üns; (2) soňra 'Bu günki 3 prioritet:' diýip iň möhüm 3 işi 1,2,3 görnüşinde ber; (3) bir setir töwekgelçilik/duýduryş (ünsden düşen endik ýa maksat barada); (4) bir setir ruhlandyryjy söz. Anyk, gysga, sözbaşysyz.",data,700);
+    if(txt){db.brief={date:todayStr(),text:txt};save();if(cur==='dashboard')render();}
+    else if(el)el.textContent='Jogap alyp bilmedim.';
+  }catch(e){if(el)el.textContent='AI jogap berip bilmedi. Internet barlygyny barla.';}
 }
 
 /* ---- PROFILE / SETTINGS ---- */
